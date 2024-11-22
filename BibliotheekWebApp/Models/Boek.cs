@@ -20,9 +20,11 @@ namespace BibliotheekApp.Models
         [DataType(DataType.Date)]
         public DateTime PublicatieDatum { get; set; }
 
-        public int? AuteurID { get; set; }
+        [Required]
+        public int AuteurID { get; set; }
         public Auteur Auteur { get; set; }
 
         public List<LidBoek> LidBoeken { get; set; } = new List<LidBoek>();
     }
+
 }

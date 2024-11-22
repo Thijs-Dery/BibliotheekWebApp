@@ -1,0 +1,45 @@
+﻿@model IEnumerable<BibliotheekApp.Models.Boek>
+
+<h2>Boeken Lijst</h2>
+
+<a href="@Url.Action("Create", "Boek")" class="btn btn-primary">Voeg Boek Toe</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ISBN</th>
+            <th>Titel</th>
+            <th>Genre</th>
+            <th>Publicatie Datum</th>
+            <th>Auteur</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var boek in Model)
+        {
+            <tr>
+                <td>@boek.ISBN</td>
+                <td>@boek.Titel</td>
+                <td>@boek.Genre</td>
+                <td>@boek.PublicatieDatum.ToString("dd-MM-yyyy")</td>
+                <td>
+                    @if (boek.Auteur != null)
+                    {
+                        @boek.Auteur.Naam
+                    }
+                    else
+                    {
+                        <span>Onbekend</span>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", "Boek", new { id = boek.ISBN })" class="btn btn-warning">Bewerken</a>
+                    <form action="@Url.Action("Delete", "Boek", new { id = boek.ISBN })" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Verwijderen</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

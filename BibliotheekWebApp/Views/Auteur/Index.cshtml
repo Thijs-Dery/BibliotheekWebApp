@@ -1,0 +1,38 @@
+﻿@model IEnumerable<BibliotheekApp.Models.Auteur>
+
+@{
+    ViewData["Title"] = "Auteurs Lijst";
+}
+
+<h2>Auteurs</h2>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Auteur Toevoegen</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Auteur ID</th>
+            <th>Naam</th>
+            <th>Geboorte Datum</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var auteur in Model)
+        {
+            <tr>
+                <td>@auteur.AuteurID</td>
+                <td>@auteur.Naam</td>
+                <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = auteur.AuteurID })" class="btn btn-warning">Bewerken</a>
+                    <form action="@Url.Action("Delete", new { id = auteur.AuteurID })" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Verwijderen</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
