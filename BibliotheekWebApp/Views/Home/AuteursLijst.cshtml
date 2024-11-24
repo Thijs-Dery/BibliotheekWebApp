@@ -1,0 +1,23 @@
+﻿@model IEnumerable<BibliotheekApp.Models.Auteur>
+
+<h2>Auteurs Lijst</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Auteur ID</th>
+            <th>Naam</th>
+            <th>Geboorte Datum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var auteur in Model)
+        {
+            <tr>
+                <td>@auteur.AuteurID</td>
+                <td>@auteur.Naam</td>
+                <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

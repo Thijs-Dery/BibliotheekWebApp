@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Lid Toevoegen";
+}
+
+<h2>Voeg een nieuw lid toe</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="naam">Naam</label>
+        <input type="text" class="form-control" id="naam" name="naam" required />
+    </div>
+    <div class="form-group">
+        <label for="geboorteDatum">Geboorte Datum</label>
+        <input type="date" class="form-control" id="geboorteDatum" name="geboortedatum" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Toevoegen</button>
+</form>
+

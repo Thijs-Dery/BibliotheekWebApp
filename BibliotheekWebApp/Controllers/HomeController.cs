@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using BibliotheekApp.Models;
+using System.Linq;
 
 namespace BibliotheekApp.Controllers
 {
@@ -17,11 +18,24 @@ namespace BibliotheekApp.Controllers
             return View();
         }
 
+        public IActionResult LedenLijst()
+        {
+            var leden = _context.Leden.ToList();
+            return View(leden);
+        }
+
         public IActionResult BoekenLijst()
         {
             var boeken = _context.Boeken.ToList();
             return View(boeken);
         }
+
+        public IActionResult AuteursLijst()
+        {
+            var auteurs = _context.Auteurs.ToList();
+            return View(auteurs);
+        }
     }
 }
+
 
