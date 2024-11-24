@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
 using System.Linq;
 
@@ -20,6 +19,52 @@ namespace BibliotheekApp.Controllers
             return View(leden);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Lid lid)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Leden.Add(lid);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(lid);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var lid = _context.Leden.Find(id);
+            if (lid == null)
+            {
+                return NotFound();
+            }
+            return View(lid);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Lid lid)
+        {
+            if (id != lid.LidID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(lid);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(lid);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
@@ -35,6 +80,9 @@ namespace BibliotheekApp.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
+
 }
+
+
 
 

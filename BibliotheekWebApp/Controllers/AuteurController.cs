@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
 using System.Linq;
 
@@ -16,8 +15,54 @@ namespace BibliotheekApp.Controllers
 
         public IActionResult Index()
         {
-            var auteurs = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
+            var auteurs = _context.Auteurs.ToList();
             return View(auteurs);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Auteur auteur)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Auteurs.Add(auteur);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(auteur);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var auteur = _context.Auteurs.Find(id);
+            if (auteur == null)
+            {
+                return NotFound();
+            }
+            return View(auteur);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Auteur auteur)
+        {
+            if (id != auteur.AuteurID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(auteur);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(auteur);
         }
 
         [HttpPost]
@@ -30,9 +75,11 @@ namespace BibliotheekApp.Controllers
                 return NotFound();
             }
 
-            auteur.IsDeleted = true;
+            _context.Auteurs.Remove(auteur);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }
+
 }
+

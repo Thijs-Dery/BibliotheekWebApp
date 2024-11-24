@@ -13,40 +13,31 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
-        // Index - Welkomstpagina
         public IActionResult Index()
         {
             return View();
         }
 
-        // Boekenlijst
         public IActionResult BoekenLijst()
         {
-            var boeken = _context.Boeken.ToList();
+            var boeken = _context.Boeken.Where(b => !b.IsDeleted).ToList();
             return View(boeken);
         }
 
-        // Auteurslijst
         public IActionResult AuteursLijst()
         {
             var auteurs = _context.Auteurs.ToList();
             return View(auteurs);
         }
 
-        // Ledenlijst
         public IActionResult LedenLijst()
         {
-            var leden = _context.Leden.ToList();
+            var leden = _context.Leden.Where(l => !l.IsDeleted).ToList();
             return View(leden);
-        }
-
-        // Privacy
-        public IActionResult Privacy()
-        {
-            return View();
         }
     }
 }
+
 
 
 

@@ -22,7 +22,9 @@ namespace BibliotheekApp.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            ViewData["Auteurs"] = _context.Auteurs.ToList();
+
+            return View(new Boek());
         }
 
         [HttpPost]
@@ -35,6 +37,8 @@ namespace BibliotheekApp.Controllers
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Auteurs"] = _context.Auteurs.ToList();
             return View(boek);
         }
 
@@ -45,6 +49,8 @@ namespace BibliotheekApp.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["Auteurs"] = _context.Auteurs.ToList();
             return View(boek);
         }
 
@@ -63,6 +69,8 @@ namespace BibliotheekApp.Controllers
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Auteurs"] = _context.Auteurs.ToList();
             return View(boek);
         }
 
@@ -82,4 +90,3 @@ namespace BibliotheekApp.Controllers
         }
     }
 }
-
