@@ -1,18 +1,23 @@
-﻿@{
-    ViewData["Title"] = "Lid Toevoegen";
-}
+﻿@model BibliotheekApp.Models.Lid
 
-<h2>Voeg een nieuw lid toe</h2>
+<h2>Voeg Lid Toe</h2>
 
-<form method="post">
+<form asp-action="Create" method="post">
     <div class="form-group">
-        <label for="naam">Naam</label>
-        <input type="text" class="form-control" id="naam" name="naam" required />
+        <label for="Naam">Naam</label>
+        <input type="text" asp-for="Naam" class="form-control" />
+        <span asp-validation-for="Naam" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label for="geboorteDatum">Geboorte Datum</label>
-        <input type="date" class="form-control" id="geboorteDatum" name="geboortedatum" required />
+        <label for="GeboorteDatum">Geboorte Datum</label>
+        <input type="date" asp-for="GeboorteDatum" class="form-control" />
+        <span asp-validation-for="GeboorteDatum" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Toevoegen</button>
+
+    <button type="submit" class="btn btn-primary">Voeg Lid Toe</button>
 </form>
+
+<a href="@Url.Action("Index", "Lid")" class="btn btn-secondary">Terug naar Ledenlijst</a>
+
 

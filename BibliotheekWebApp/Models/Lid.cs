@@ -10,14 +10,18 @@ namespace BibliotheekApp.Models
         public int LidID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string Naam { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime GeboorteDatum { get; set; }
 
-        public List<LidBoek> GeleendeBoeken { get; set; } = new List<LidBoek>();
+        public bool IsDeleted { get; set; }
+
+        public ICollection<LidBoek> GeleendeBoeken { get; set; }
     }
 }
+
+
 
 

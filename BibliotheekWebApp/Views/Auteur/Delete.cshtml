@@ -1,0 +1,11 @@
+﻿@model BibliotheekApp.Models.Auteur
+
+<h2>Auteur Verwijderen</h2>
+
+<h4>Weet je zeker dat je de auteur @Model.Naam wilt verwijderen?</h4>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="AuteurID" />
+    <button type="submit" class="btn btn-danger">Verwijder</button>
+</form>
+
+<a href="@Url.Action("Index", "Auteur")" class="btn btn-secondary">Annuleer</a>

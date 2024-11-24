@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BibliotheekWebApp.Migrations
 {
     [DbContext(typeof(BibliotheekContext))]
-    [Migration("20241122163923_SeedData")]
-    partial class SeedData
+    [Migration("20241124205022_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,10 +36,13 @@ namespace BibliotheekWebApp.Migrations
                     b.Property<DateTime>("GeboorteDatum")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Naam")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("AuteurID");
 
@@ -50,25 +53,15 @@ namespace BibliotheekWebApp.Migrations
                         {
                             AuteurID = 1,
                             GeboorteDatum = new DateTime(1975, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Naam = "Auteur 1"
                         },
                         new
                         {
                             AuteurID = 2,
                             GeboorteDatum = new DateTime(1980, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Naam = "Auteur 2"
-                        },
-                        new
-                        {
-                            AuteurID = 3,
-                            GeboorteDatum = new DateTime(1995, 9, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Naam = "Auteur 3"
-                        },
-                        new
-                        {
-                            AuteurID = 4,
-                            GeboorteDatum = new DateTime(1978, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Naam = "Auteur 4"
                         });
                 });
 
@@ -83,6 +76,9 @@ namespace BibliotheekWebApp.Migrations
                     b.Property<string>("Genre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("PublicatieDatum")
                         .HasColumnType("datetime2");
@@ -104,6 +100,7 @@ namespace BibliotheekWebApp.Migrations
                             ISBN = "9781402894626",
                             AuteurID = 1,
                             Genre = "Koken",
+                            IsDeleted = false,
                             PublicatieDatum = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Titel = "Frieda Kroket"
                         },
@@ -112,24 +109,9 @@ namespace BibliotheekWebApp.Migrations
                             ISBN = "9783161484100",
                             AuteurID = 2,
                             Genre = "Koken",
+                            IsDeleted = false,
                             PublicatieDatum = new DateTime(2021, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Titel = "Koken met Henk"
-                        },
-                        new
-                        {
-                            ISBN = "TEST-010e1999",
-                            AuteurID = 3,
-                            Genre = "Fictie",
-                            PublicatieDatum = new DateTime(2022, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Titel = "Wdsawd"
-                        },
-                        new
-                        {
-                            ISBN = "TEST-0001",
-                            AuteurID = 4,
-                            Genre = "Avontuur",
-                            PublicatieDatum = new DateTime(2019, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Titel = "De Avonturen van Bob"
                         });
                 });
 
@@ -144,10 +126,13 @@ namespace BibliotheekWebApp.Migrations
                     b.Property<DateTime>("GeboorteDatum")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Naam")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("LidID");
 
@@ -158,25 +143,15 @@ namespace BibliotheekWebApp.Migrations
                         {
                             LidID = 1,
                             GeboorteDatum = new DateTime(1990, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Naam = "Freddy"
                         },
                         new
                         {
                             LidID = 2,
                             GeboorteDatum = new DateTime(1985, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             Naam = "Jochim"
-                        },
-                        new
-                        {
-                            LidID = 3,
-                            GeboorteDatum = new DateTime(2000, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Naam = "Jos"
-                        },
-                        new
-                        {
-                            LidID = 4,
-                            GeboorteDatum = new DateTime(1992, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Naam = "Sofie"
                         });
                 });
 
@@ -190,16 +165,15 @@ namespace BibliotheekWebApp.Migrations
 
                     b.Property<string>("ISBN")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("ISBN");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("InleverDatum")
+                    b.Property<DateTime>("InleverDatum")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("LidID")
+                    b.Property<int>("LidID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UitleenDatum")
+                    b.Property<DateTime>("UitleenDatum")
                         .HasColumnType("datetime2");
 
                     b.HasKey("LidBoekID");
@@ -218,14 +192,6 @@ namespace BibliotheekWebApp.Migrations
                             InleverDatum = new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LidID = 1,
                             UitleenDatum = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            LidBoekID = 2,
-                            ISBN = "9783161484100",
-                            InleverDatum = new DateTime(2023, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LidID = 2,
-                            UitleenDatum = new DateTime(2023, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -250,7 +216,8 @@ namespace BibliotheekWebApp.Migrations
                     b.HasOne("BibliotheekApp.Models.Lid", "Lid")
                         .WithMany("GeleendeBoeken")
                         .HasForeignKey("LidID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Boek");
 

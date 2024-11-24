@@ -1,7 +1,6 @@
-﻿using BibliotheekApp.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
+using BibliotheekApp.Models;
 using System.Linq;
 
 namespace BibliotheekApp.Controllers
@@ -15,67 +14,61 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
-        // Lijst van alle boeken
         public IActionResult Index()
         {
-            var boeken = _context.Boeken
-                .Include(b => b.Auteur)
-                .ToList();
+            var boeken = _context.Boeken.Where(b => !b.IsDeleted).ToList();
             return View(boeken);
         }
 
-        // Boek toevoegen
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(string titel, string genre, DateTime? publicatieDatum, int? auteurId, string isbn)
+        public IActionResult Create()
         {
-            if (ModelState.IsValid)
-            {
-                if (auteurId == null || string.IsNullOrWhiteSpace(titel) || string.IsNullOrWhiteSpace(genre) || !publicatieDatum.HasValue)
-                {
-                    ModelState.AddModelError("", "Alle velden moeten ingevuld zijn.");
-                    return View();
-                }
-
-                var boek = new Boek
-                {
-                    ISBN = isbn,
-                    Titel = titel,
-                    Genre = genre,
-                    PublicatieDatum = publicatieDatum.Value,
-                    AuteurID = auteurId.Value
-                };
-
-                _context.Boeken.Add(boek);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
             return View();
         }
 
-        // Boek bewerken
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, string titel, string genre, DateTime publicatieDatum)
+        public IActionResult Create(Boek boek)
         {
-            var boek = _context.Boeken.Find(id);
-            if (boek == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                _context.Boeken.Add(boek);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
             }
-
-            boek.Titel = titel;
-            boek.Genre = genre;
-            boek.PublicatieDatum = publicatieDatum;
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+            return View(boek);
         }
 
-        // Boek verwijderen
+        public IActionResult Edit(string id)
+        {
+            var boek = _context.Boeken.Find(id);
+            if (boek == null)
+            {
+                return NotFound();
+            }
+            return View(boek);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public IActionResult Edit(string id, Boek boek)
+        {
+            if (id != boek.ISBN)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(boek);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(boek);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(string id)
         {
             var boek = _context.Boeken.Find(id);
             if (boek == null)
@@ -83,9 +76,10 @@ namespace BibliotheekApp.Controllers
                 return NotFound();
             }
 
-            _context.Boeken.Remove(boek);
+            boek.IsDeleted = true;
             _context.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
+

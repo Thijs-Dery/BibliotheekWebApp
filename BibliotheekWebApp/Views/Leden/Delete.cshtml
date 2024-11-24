@@ -1,0 +1,12 @@
+﻿@model BibliotheekApp.Models.Lid
+
+<h2>Lid Verwijderen</h2>
+
+<h4>Weet je zeker dat je het lid @Model.Naam wilt verwijderen?</h4>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="LidID" />
+    <button type="submit" class="btn btn-danger">Verwijder</button>
+</form>
+
+<a href="@Url.Action("Index", "Lid")" class="btn btn-secondary">Annuleer</a>
+

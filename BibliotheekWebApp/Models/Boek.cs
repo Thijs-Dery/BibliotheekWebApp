@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BibliotheekApp.Models
 {
@@ -20,11 +18,16 @@ namespace BibliotheekApp.Models
         [DataType(DataType.Date)]
         public DateTime PublicatieDatum { get; set; }
 
-        [Required]
-        public int AuteurID { get; set; }
+        public int? AuteurID { get; set; }
         public Auteur Auteur { get; set; }
+
+        public bool IsDeleted { get; set; }
 
         public List<LidBoek> LidBoeken { get; set; } = new List<LidBoek>();
     }
-
 }
+
+
+
+
+

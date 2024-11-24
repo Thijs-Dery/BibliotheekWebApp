@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BibliotheekWebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedData : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,9 @@ namespace BibliotheekWebApp.Migrations
                 {
                     AuteurID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Naam = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Naam = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,8 +34,9 @@ namespace BibliotheekWebApp.Migrations
                 {
                     LidID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Naam = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Naam = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,7 +51,8 @@ namespace BibliotheekWebApp.Migrations
                     Titel = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PublicatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AuteurID = table.Column<int>(type: "int", nullable: true)
+                    AuteurID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,10 +71,10 @@ namespace BibliotheekWebApp.Migrations
                 {
                     LidBoekID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LidID = table.Column<int>(type: "int", nullable: true),
+                    LidID = table.Column<int>(type: "int", nullable: false),
                     ISBN = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UitleenDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    InleverDatum = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    UitleenDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    InleverDatum = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,45 +95,35 @@ namespace BibliotheekWebApp.Migrations
 
             migrationBuilder.InsertData(
                 table: "Auteurs",
-                columns: new[] { "AuteurID", "GeboorteDatum", "Naam" },
+                columns: new[] { "AuteurID", "GeboorteDatum", "IsDeleted", "Naam" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1975, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Auteur 1" },
-                    { 2, new DateTime(1980, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Auteur 2" },
-                    { 3, new DateTime(1995, 9, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), "Auteur 3" },
-                    { 4, new DateTime(1978, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), "Auteur 4" }
+                    { 1, new DateTime(1975, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Auteur 1" },
+                    { 2, new DateTime(1980, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Auteur 2" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Leden",
-                columns: new[] { "LidID", "GeboorteDatum", "Naam" },
+                columns: new[] { "LidID", "GeboorteDatum", "IsDeleted", "Naam" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1990, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Freddy" },
-                    { 2, new DateTime(1985, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Jochim" },
-                    { 3, new DateTime(2000, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Jos" },
-                    { 4, new DateTime(1992, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sofie" }
+                    { 1, new DateTime(1990, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Freddy" },
+                    { 2, new DateTime(1985, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Jochim" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Boeken",
-                columns: new[] { "ISBN", "AuteurID", "Genre", "PublicatieDatum", "Titel" },
+                columns: new[] { "ISBN", "AuteurID", "Genre", "IsDeleted", "PublicatieDatum", "Titel" },
                 values: new object[,]
                 {
-                    { "9781402894626", 1, "Koken", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Frieda Kroket" },
-                    { "9783161484100", 2, "Koken", new DateTime(2021, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "Koken met Henk" },
-                    { "TEST-0001", 4, "Avontuur", new DateTime(2019, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), "De Avonturen van Bob" },
-                    { "TEST-010e1999", 3, "Fictie", new DateTime(2022, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), "Wdsawd" }
+                    { "9781402894626", 1, "Koken", false, new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Frieda Kroket" },
+                    { "9783161484100", 2, "Koken", false, new DateTime(2021, 2, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "Koken met Henk" }
                 });
 
             migrationBuilder.InsertData(
                 table: "LidBoeken",
                 columns: new[] { "LidBoekID", "ISBN", "InleverDatum", "LidID", "UitleenDatum" },
-                values: new object[,]
-                {
-                    { 1, "9781402894626", new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "9783161484100", new DateTime(2023, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, new DateTime(2023, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
-                });
+                values: new object[] { 1, "9781402894626", new DateTime(2023, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Boeken_AuteurID",

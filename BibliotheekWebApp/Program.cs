@@ -1,8 +1,10 @@
-using BibliotheekApp.Models;
 using Microsoft.EntityFrameworkCore;
+using BibliotheekApp.Data;
+using BibliotheekApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Voeg DbContext toe
 builder.Services.AddDbContext<BibliotheekContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -10,6 +12,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Configuratie voor de HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -32,5 +35,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-

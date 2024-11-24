@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<BibliotheekApp.Models.Boek>
 
-<h2>Boeken Lijst</h2>
+@{
+    ViewData["Title"] = "Boekenlijst";
+}
+
+<h2>Boekenlijst</h2>
 
 <a href="@Url.Action("Create", "Boek")" class="btn btn-primary">Voeg Boek Toe</a>
 
@@ -43,3 +47,6 @@
         }
     </tbody>
 </table>
+
+
+
