@@ -1,18 +1,23 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using BibliotheekApp.Data;
 using BibliotheekApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Voeg DbContext toe
+// Configure database context
 builder.Services.AddDbContext<BibliotheekContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Identity services
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<BibliotheekContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configuratie voor de HTTP request pipeline
+// Configure HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -25,9 +30,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

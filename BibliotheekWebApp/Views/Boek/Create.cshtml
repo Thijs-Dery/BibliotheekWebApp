@@ -6,7 +6,26 @@
 
 <h2>Voeg Boek Toe</h2>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <form method="post">
+    <div class="form-group">
+        <label for="ISBN">ISBN</label>
+        <input type="text" class="form-control" id="ISBN" name="ISBN" value="@Model.ISBN" />
+    </div>
+
     <div class="form-group">
         <label for="Titel">Titel</label>
         <input type="text" class="form-control" id="Titel" name="Titel" value="@Model.Titel" required />
@@ -28,11 +47,20 @@
             <option value="">Selecteer Auteur</option>
             @foreach (var auteur in ViewData["Auteurs"] as IEnumerable<BibliotheekApp.Models.Auteur>)
             {
-                <option value="@auteur.AuteurID" selected="@(auteur.AuteurID == Model.AuteurID ? "selected" : "")">@auteur.Naam</option>
+                <option value="@auteur.AuteurID" selected="@(auteur.AuteurID == Model.AuteurID ? "selected" : "")">
+                    @auteur.Naam
+                </option>
             }
         </select>
+    </div>
+
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="IsISBNBlank" name="IsISBNBlank" />
+        <label class="form-check-label" for="IsISBNBlank">Laat ISBN leeglaten (Test ISBN zal worden gegenereerd)</label>
     </div>
 
     <button type="submit" class="btn btn-primary">Voeg Toe</button>
     <a href="@Url.Action("Index", "Boek")" class="btn btn-secondary">Annuleren</a>
 </form>
+
+

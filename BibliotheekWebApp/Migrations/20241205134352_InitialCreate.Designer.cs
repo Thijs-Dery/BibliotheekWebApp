@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BibliotheekWebApp.Migrations
 {
     [DbContext(typeof(BibliotheekContext))]
-    [Migration("20241124205022_InitialCreate")]
+    [Migration("20241205134352_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace BibliotheekWebApp.Migrations
                     b.Property<string>("ISBN")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("AuteurID")
+                    b.Property<int>("AuteurID")
                         .HasColumnType("int");
 
                     b.Property<string>("Genre")
@@ -85,8 +85,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.Property<string>("Titel")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ISBN");
 
@@ -200,7 +199,8 @@ namespace BibliotheekWebApp.Migrations
                     b.HasOne("BibliotheekApp.Models.Auteur", "Auteur")
                         .WithMany("Boeken")
                         .HasForeignKey("AuteurID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Auteur");
                 });

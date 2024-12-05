@@ -4,6 +4,7 @@ using BibliotheekApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BibliotheekWebApp.Migrations
 {
     [DbContext(typeof(BibliotheekContext))]
-    partial class BibliotheekContextModelSnapshot : ModelSnapshot
+    [Migration("20241205225030_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,44 +96,6 @@ namespace BibliotheekWebApp.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AccessFailedCount = 0,
-                            Achternaam = "User",
-                            ConcurrencyStamp = "77c0052b-50b9-4ffb-9eaa-da54afd1afbc",
-                            Email = "admin@example.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA9urPnVA4wpFv4Wkg2Jm7JN7B6sPKilBmFaGOU1KRV7npZX8/dojV3e9pD7hEfChQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "19cb106f-f7c2-4273-ac01-cda8aaee759e",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@example.com",
-                            Voornaam = "Admin"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            AccessFailedCount = 0,
-                            Achternaam = "User",
-                            ConcurrencyStamp = "1f316895-9335-4daa-90cd-e7d1018e5aa7",
-                            Email = "user@example.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "USER@EXAMPLE.COM",
-                            NormalizedUserName = "USER@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOzfwdEjHZcZexIIL7PPu5jrTjQO2hpQCpfOVl3RJZO/0TGlHU0xla5CFcUNJRWrow==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "fc37ad37-f344-423a-ad72-cc3c349fffa4",
-                            TwoFactorEnabled = false,
-                            UserName = "user@example.com",
-                            Voornaam = "Regular"
-                        });
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.Auteur", b =>
@@ -155,22 +120,6 @@ namespace BibliotheekWebApp.Migrations
                     b.HasKey("AuteurID");
 
                     b.ToTable("Auteurs");
-
-                    b.HasData(
-                        new
-                        {
-                            AuteurID = 1,
-                            GeboorteDatum = new DateTime(1975, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Naam = "Auteur 1"
-                        },
-                        new
-                        {
-                            AuteurID = 2,
-                            GeboorteDatum = new DateTime(1980, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Naam = "Auteur 2"
-                        });
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.Boek", b =>
@@ -200,26 +149,6 @@ namespace BibliotheekWebApp.Migrations
                     b.HasIndex("AuteurID");
 
                     b.ToTable("Boeken");
-
-                    b.HasData(
-                        new
-                        {
-                            ISBN = "9781402894626",
-                            AuteurID = 1,
-                            Genre = "Koken",
-                            IsDeleted = false,
-                            PublicatieDatum = new DateTime(2024, 12, 5, 23, 55, 25, 413, DateTimeKind.Local).AddTicks(5777),
-                            Titel = "Frieda Kroket"
-                        },
-                        new
-                        {
-                            ISBN = "9783161484100",
-                            AuteurID = 2,
-                            Genre = "Koken",
-                            IsDeleted = false,
-                            PublicatieDatum = new DateTime(2024, 12, 5, 23, 55, 25, 413, DateTimeKind.Local).AddTicks(5879),
-                            Titel = "Koken met Henk"
-                        });
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.Lid", b =>
@@ -301,20 +230,6 @@ namespace BibliotheekWebApp.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -402,18 +317,6 @@ namespace BibliotheekWebApp.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "1",
-                            RoleId = "1"
-                        },
-                        new
-                        {
-                            UserId = "2",
-                            RoleId = "2"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
