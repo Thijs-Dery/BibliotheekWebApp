@@ -1,0 +1,43 @@
+﻿@model IEnumerable<AdminUserViewModel>
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h2>Admin Panel</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Gebruikersnaam</th>
+            <th>Email</th>
+            <th>Is Admin</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <form asp-action="ToggleAdminRole" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@user.UserId" />
+                        <input type="hidden" name="isAdmin" value="@(user.IsAdmin ? "false" : "true")" />
+                        <button type="submit" class="btn btn-sm @(user.IsAdmin ? "btn-success" : "btn-secondary")">
+                            @(user.IsAdmin ? "Admin" : "Maak Admin")
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="DeleteUser" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@user.UserId" />
+                        <button type="submit" class="btn btn-sm btn-danger">Verwijderen</button>
+                    </form>
+                    <a asp-action="EditRoles" asp-route-userId="@user.UserId" class="btn btn-sm btn-warning">Beheer Rollen</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

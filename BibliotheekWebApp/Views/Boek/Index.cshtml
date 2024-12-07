@@ -1,12 +1,8 @@
 ﻿@model IEnumerable<BibliotheekApp.Models.Boek>
 
-@{
-    ViewData["Title"] = "Boekenlijst";
-}
-
 <h2>Boekenlijst</h2>
 
-<a href="@Url.Action("Create", "Boek")" class="btn btn-primary">Voeg Boek Toe</a>
+<a asp-action="Create" class="btn btn-primary">Voeg Boek Toe</a>
 
 <table class="table">
     <thead>
@@ -27,16 +23,7 @@
                 <td>@boek.Titel</td>
                 <td>@boek.Genre</td>
                 <td>@boek.PublicatieDatum.ToString("dd-MM-yyyy")</td>
-                <td>
-                    @if (boek.Auteur != null)
-                    {
-                        @boek.Auteur.Naam
-                    }
-                    else
-                    {
-                        <span>Onbekend</span>
-                    }
-                </td>
+                <td>@(boek.Auteur?.Naam ?? "Onbekend")</td>
                 <td>
                     <a href="@Url.Action("Edit", "Boek", new { id = boek.ISBN })" class="btn btn-warning">Bewerken</a>
                     <form action="@Url.Action("Delete", "Boek", new { id = boek.ISBN })" method="post" style="display:inline;">
@@ -47,6 +34,3 @@
         }
     </tbody>
 </table>
-
-
-

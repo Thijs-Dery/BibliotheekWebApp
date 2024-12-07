@@ -1,16 +1,19 @@
 ﻿using BibliotheekApp.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IEmailSender _emailSender;
 
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _emailSender = emailSender; // Zorg ervoor dat dit correct wordt toegewezen
     }
 
     public IActionResult Login(string returnUrl = null)
@@ -52,13 +55,20 @@ public class AccountController : Controller
                 UserName = model.Email,
                 Email = model.Email,
                 Voornaam = model.Voornaam,
-                Achternaam = model.Achternaam,
-                EmailConfirmed = true
+                Achternaam = model.Achternaam
             };
+
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
+
+                // Stuur verificatie-email
+                await _emailSender.SendEmailAsync(user.Email, "Bevestig je e-mail",
+                    $"Klik op deze link om je e-mailadres te bevestigen: <a href='{confirmationLink}'>Bevestig E-mail</a>");
+
+                TempData["Message"] = "Controleer je e-mail om je registratie te voltooien.";
                 return RedirectToAction("Index", "Home");
             }
 
@@ -69,6 +79,25 @@ public class AccountController : Controller
         }
 
         return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        if (userId == null || token == null) return BadRequest();
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return NotFound();
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (result.Succeeded)
+        {
+            TempData["Message"] = "E-mail succesvol bevestigd.";
+            return RedirectToAction("Login", "Account");
+        }
+
+        TempData["ErrorMessage"] = "E-mailbevestiging mislukt.";
+        return RedirectToAction("Index", "Home");
     }
 
     public async Task<IActionResult> Logout()

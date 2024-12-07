@@ -1,0 +1,20 @@
+﻿@model EditRolesViewModel
+
+<h2>Rollen aanpassen voor @Model.UserName</h2>
+
+<form asp-action="EditRoles" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    @foreach (var role in Model.AllRoles)
+    {
+        <div class="form-check">
+            <input type="checkbox" value="@role" name="SelectedRoles" @(Model.SelectedRoles.Contains(role) ? "checked" : "") />
+
+                   @(Model.SelectedRoles.Contains(role) ? "checked" : "") />
+            <label class="form-check-label">@role</label>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Opslaan</button>
+    <a asp-action="Panel" class="btn btn-secondary">Annuleren</a>
+</form>

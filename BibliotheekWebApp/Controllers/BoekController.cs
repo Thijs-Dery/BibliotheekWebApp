@@ -18,82 +18,105 @@ namespace BibliotheekApp.Controllers
             _logger = logger;
         }
 
-        // Index view: Toon lijst van boeken
+        // Index: Lijst van boeken
         public IActionResult Index()
         {
-            _logger.LogInformation("Navigated to Index view for Boek.");
-
-            // Haal boeken op met de gerelateerde Auteur-entiteit
             var boeken = _context.Boeken
-                                 .Include(b => b.Auteur) // Eager Loading van Auteur
-                                 .Where(b => !b.IsDeleted)
+                                 .Include(b => b.Auteur) // Laad de auteur gerelateerd aan elk boek
+                                 .Where(b => !b.IsDeleted) // Alleen niet-verwijderde boeken
                                  .ToList();
 
-            // Log de boeken en auteurs
             foreach (var boek in boeken)
             {
-                _logger.LogInformation($"Boek: {boek.Titel}, Auteur: {(boek.Auteur != null ? boek.Auteur.Naam : "Geen auteur")}");
+                if (boek.Auteur == null)
+                {
+                    boek.Auteur = new Auteur { Naam = "Onbekend" }; // Fallback voor ontbrekende auteurs
+                }
             }
 
             return View(boeken);
         }
 
-        // Create view: Formulier om een boek toe te voegen
+        // Create: Laad formulier voor nieuw boek
         public IActionResult Create()
         {
-            _logger.LogInformation("Navigated to Create view for Boek.");
-            var auteurs = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
-            _logger.LogInformation($"Aantal auteurs opgehaald: {auteurs.Count}");
-
-            ViewData["Auteurs"] = auteurs.Any() ? auteurs : new List<Auteur>();
+            ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(new Boek());
         }
 
-        // Create POST: Verwerk het formulier
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Boek boek, string? IsISBNBlank)
+        public IActionResult Create(Boek boek)
         {
-            _logger.LogInformation("Create POST action triggered.");
-            _logger.LogInformation($"Ontvangen Boek Model: {boek.Titel}, AuteurID: {boek.AuteurID}");
+            if (ModelState.IsValid)
+            {
+                _context.Boeken.Add(boek);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Boek toegevoegd!";
+                return RedirectToAction(nameof(Index));
+            }
 
             ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
+            return View(boek);
+        }
 
-            if (boek.AuteurID <= 0)
-            {
-                _logger.LogWarning("AuteurID is ongeldig. Validatie mislukt.");
-                ModelState.AddModelError("AuteurID", "Selecteer een geldige auteur.");
-            }
+        // Edit: Haal gegevens op voor bewerken
+        public IActionResult Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return NotFound();
 
-            if (!string.IsNullOrEmpty(IsISBNBlank) && IsISBNBlank == "on")
-            {
-                boek.ISBN = "TEST-" + Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
-                _logger.LogInformation($"Genereerde TEST-ISBN: {boek.ISBN}");
-            }
+            var boek = _context.Boeken
+                               .Include(b => b.Auteur)
+                               .FirstOrDefault(b => b.ISBN == id && !b.IsDeleted);
+
+            if (boek == null) return NotFound();
+
+            ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
+            return View(boek);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(string id, Boek boek)
+        {
+            if (id != boek.ISBN) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _logger.LogInformation("Model is valid. Poging tot toevoegen van boek aan de database.");
-                    _context.Boeken.Add(boek);
+                    _context.Update(boek);
                     _context.SaveChanges();
-                    _logger.LogInformation("Boek succesvol toegevoegd aan de database.");
-                    TempData["SuccessMessage"] = "Boek succesvol toegevoegd!";
+                    TempData["SuccessMessage"] = "Boek bijgewerkt!";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
+                catch (DbUpdateException ex)
                 {
-                    _logger.LogError($"Fout bij het toevoegen van boek: {ex.Message}");
-                    TempData["ErrorMessage"] = $"Fout bij het toevoegen van het boek: {ex.Message}";
+                    _logger.LogError($"Fout bij bijwerken boek: {ex.Message}");
+                    TempData["ErrorMessage"] = "Er is een fout opgetreden bij het bijwerken van het boek.";
                 }
             }
-            else
-            {
-                _logger.LogWarning("ModelState is niet geldig. Boek niet toegevoegd.");
-            }
 
+            ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(boek);
+        }
+
+        // Delete: Verwijder boek
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
+            var boek = _context.Boeken.FirstOrDefault(b => b.ISBN == id);
+            if (boek == null) return NotFound();
+
+            boek.IsDeleted = true; // Markeer als verwijderd
+            _context.Update(boek);
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Boek succesvol verwijderd!";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

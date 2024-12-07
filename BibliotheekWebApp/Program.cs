@@ -2,23 +2,35 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Data;
 using BibliotheekApp.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure database context
 builder.Services.AddDbContext<BibliotheekContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<BibliotheekContext>()
-    .AddDefaultTokenProviders();
+// Configure Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true; // Vereist e-mailverificatie
+})
+.AddEntityFrameworkStores<BibliotheekContext>()
+.AddDefaultTokenProviders();
 
+// Configure e-mailservice
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+// Configure MVC met views
 builder.Services.AddControllersWithViews();
 
+// Logging configuratie
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 var app = builder.Build();
 
+// Configure middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -43,6 +55,7 @@ using (var scope = app.Services.CreateScope())
     await SeedData.InitializeAsync(roleManager, userManager);
 }
 
+// Configure routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
