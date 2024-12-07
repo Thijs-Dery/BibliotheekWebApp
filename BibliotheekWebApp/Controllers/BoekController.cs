@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
 using System;
@@ -6,6 +7,7 @@ using System.Linq;
 
 namespace BibliotheekApp.Controllers
 {
+    [Authorize(Roles = "Admin")] // Alleen toegankelijk voor Admin-rollen
     public class BoekController : Controller
     {
         private readonly BibliotheekContext _context;
@@ -39,6 +41,10 @@ namespace BibliotheekApp.Controllers
             {
                 boek.ISBN = Guid.NewGuid().ToString("N").Substring(0, 13);
             }
+            else if (string.IsNullOrEmpty(boek.ISBN) || boek.ISBN.Length != 13)
+            {
+                ModelState.AddModelError("ISBN", "ISBN moet precies 13 tekens bevatten.");
+            }
 
             // Als ModelState geldig is, sla het boek op
             if (ModelState.IsValid)
@@ -50,9 +56,13 @@ namespace BibliotheekApp.Controllers
                     TempData["SuccessMessage"] = "Boek succesvol toegevoegd!";
                     return RedirectToAction(nameof(Create)); // Stuur gebruiker terug naar Create-pagina
                 }
+                catch (DbUpdateException ex)
+                {
+                    TempData["ErrorMessage"] = $"Fout bij het opslaan in de database: {ex.Message}";
+                }
                 catch (Exception ex)
                 {
-                    TempData["ErrorMessage"] = $"Fout bij het toevoegen van het boek: {ex.Message}";
+                    TempData["ErrorMessage"] = $"Onverwachte fout: {ex.Message}";
                 }
             }
 
@@ -61,4 +71,3 @@ namespace BibliotheekApp.Controllers
         }
     }
 }
-
