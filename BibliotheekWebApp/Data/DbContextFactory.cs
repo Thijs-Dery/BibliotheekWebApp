@@ -1,17 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BibliotheekApp.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using BibliotheekApp.Models;
 
 namespace BibliotheekApp.Data
 {
-    public class DbContextFactory
+    public class DbContextFactory : IDesignTimeDbContextFactory<BibliotheekContext>
     {
-        public static void ConfigureDbContext(IServiceCollection services, IConfiguration configuration)
+        public BibliotheekContext CreateDbContext(string[] args)
         {
-            services.AddDbContext<BibliotheekContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var optionsBuilder = new DbContextOptionsBuilder<BibliotheekContext>();
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+
+            return new BibliotheekContext(optionsBuilder.Options);
         }
     }
 }
-

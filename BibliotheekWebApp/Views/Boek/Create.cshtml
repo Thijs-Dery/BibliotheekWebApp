@@ -4,63 +4,74 @@
     ViewData["Title"] = "Voeg Boek Toe";
 }
 
-<h2>Voeg Boek Toe</h2>
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
-}
+<h2>@ViewData["Title"]</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-<form method="post">
+<form asp-action="Create" method="post">
     <div class="form-group">
-        <label for="ISBN">ISBN</label>
-        <input type="text" class="form-control" id="ISBN" name="ISBN" value="@Model.ISBN" />
+        <label asp-for="ISBN" class="control-label"></label>
+        <input asp-for="ISBN" class="form-control" id="isbnField" />
+        <span asp-validation-for="ISBN" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Titel">Titel</label>
-        <input type="text" class="form-control" id="Titel" name="Titel" value="@Model.Titel" required />
+        <label asp-for="Titel" class="control-label"></label>
+        <input asp-for="Titel" class="form-control" />
+        <span asp-validation-for="Titel" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Genre">Genre</label>
-        <input type="text" class="form-control" id="Genre" name="Genre" value="@Model.Genre" required />
+        <label asp-for="Genre" class="control-label"></label>
+        <input asp-for="Genre" class="form-control" />
+        <span asp-validation-for="Genre" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="PublicatieDatum">Publicatie Datum</label>
-        <input type="date" class="form-control" id="PublicatieDatum" name="PublicatieDatum" value="@Model.PublicatieDatum.ToString("yyyy-MM-dd")" required />
+        <label asp-for="PublicatieDatum" class="control-label"></label>
+        <input asp-for="PublicatieDatum" class="form-control" type="date" />
+        <span asp-validation-for="PublicatieDatum" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="AuteurID">Auteur</label>
-        <select class="form-control" id="AuteurID" name="AuteurID" required>
-            <option value="">Selecteer Auteur</option>
-            @foreach (var auteur in ViewData["Auteurs"] as IEnumerable<BibliotheekApp.Models.Auteur>)
-            {
-                <option value="@auteur.AuteurID" selected="@(auteur.AuteurID == Model.AuteurID ? "selected" : "")">
-                    @auteur.Naam
-                </option>
-            }
+        <label asp-for="AuteurID" class="control-label"></label>
+        <select asp-for="AuteurID" class="form-control" asp-items="@(new SelectList(ViewData["Auteurs"] as List<BibliotheekApp.Models.Auteur>, "AuteurID", "Naam"))">
+            <option value="">Selecteer een auteur</option>
         </select>
+        <span asp-validation-for="AuteurID" class="text-danger"></span>
     </div>
 
     <div class="form-group form-check">
-        <input type="checkbox" class="form-check-input" id="IsISBNBlank" name="IsISBNBlank" />
-        <label class="form-check-label" for="IsISBNBlank">Laat ISBN leeglaten (Test ISBN zal worden gegenereerd)</label>
+        <input type="checkbox" class="form-check-input" id="testISBNCheckbox" name="IsISBNBlank" onchange="toggleISBNField()" />
+        <label class="form-check-label" for="testISBNCheckbox">
+            Laat ISBN leeglaten (Test ISBN zal worden gegenereerd)
+        </label>
     </div>
 
-    <button type="submit" class="btn btn-primary">Voeg Toe</button>
-    <a href="@Url.Action("Index", "Boek")" class="btn btn-secondary">Annuleren</a>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Voeg Toe</button>
+        <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+    </div>
 </form>
 
+<script>
+    function toggleISBNField() {
+        const checkbox = document.getElementById("testISBNCheckbox");
+        const isbnField = document.getElementById("isbnField");
 
+        if (checkbox.checked) {
+            isbnField.value = "TEST-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+            isbnField.readOnly = true;
+        } else {
+            isbnField.value = "";
+            isbnField.readOnly = false;
+        }
+    }
+</script>

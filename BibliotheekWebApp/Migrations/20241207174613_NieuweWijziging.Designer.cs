@@ -4,6 +4,7 @@ using BibliotheekApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BibliotheekWebApp.Migrations
 {
     [DbContext(typeof(BibliotheekContext))]
-    partial class BibliotheekContextModelSnapshot : ModelSnapshot
+    [Migration("20241207174613_NieuweWijziging")]
+    partial class NieuweWijziging
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +173,7 @@ namespace BibliotheekWebApp.Migrations
                             AuteurID = 1,
                             Genre = "Koken",
                             IsDeleted = false,
-                            PublicatieDatum = new DateTime(2024, 12, 7, 19, 2, 25, 844, DateTimeKind.Local).AddTicks(6647),
+                            PublicatieDatum = new DateTime(2024, 12, 7, 18, 46, 12, 702, DateTimeKind.Local).AddTicks(7726),
                             Titel = "Frieda Kroket"
                         },
                         new
@@ -179,7 +182,7 @@ namespace BibliotheekWebApp.Migrations
                             AuteurID = 2,
                             Genre = "Koken",
                             IsDeleted = false,
-                            PublicatieDatum = new DateTime(2024, 12, 7, 19, 2, 25, 844, DateTimeKind.Local).AddTicks(6711),
+                            PublicatieDatum = new DateTime(2024, 12, 7, 18, 46, 12, 702, DateTimeKind.Local).AddTicks(7792),
                             Titel = "Koken met Henk"
                         });
                 });

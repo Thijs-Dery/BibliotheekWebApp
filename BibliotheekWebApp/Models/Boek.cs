@@ -27,10 +27,3 @@ namespace BibliotheekApp.Models
         public ICollection<LidBoek> LidBoeken { get; set; } = new List<LidBoek>();
     }
 }
-
-
-
-
-
-
-
