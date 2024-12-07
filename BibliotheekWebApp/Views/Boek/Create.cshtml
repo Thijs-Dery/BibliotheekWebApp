@@ -1,19 +1,15 @@
 ﻿@model BibliotheekApp.Models.Boek
 
-@{
-    ViewData["Title"] = "Voeg Boek Toe";
-}
+<h2>Voeg Boek Toe</h2>
 
-<h2>@ViewData["Title"]</h2>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
+<div>
+    @if (TempData["DebugLog"] != null)
+    {
+        <div class="alert alert-info">
+            @Html.Raw(TempData["DebugLog"])
+        </div>
+    }
+</div>
 
 <form asp-action="Create" method="post">
     <div class="form-group">
@@ -36,7 +32,7 @@
 
     <div class="form-group">
         <label asp-for="PublicatieDatum" class="control-label"></label>
-        <input asp-for="PublicatieDatum" class="form-control" type="date" />
+        <input asp-for="PublicatieDatum" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="PublicatieDatum" class="text-danger"></span>
     </div>
 

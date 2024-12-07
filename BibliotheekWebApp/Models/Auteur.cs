@@ -16,12 +16,7 @@ namespace BibliotheekApp.Models
         [DataType(DataType.Date)]
         public DateTime GeboorteDatum { get; set; }
 
-        public bool IsDeleted { get; set; }
-        public ICollection<Boek> Boeken { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public ICollection<Boek> Boeken { get; set; } = new List<Boek>();
     }
 }
-
-
-
-
-

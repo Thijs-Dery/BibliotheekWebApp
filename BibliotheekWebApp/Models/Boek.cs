@@ -7,6 +7,7 @@ namespace BibliotheekApp.Models
     public class Boek
     {
         [Key]
+        [Required]
         public string ISBN { get; set; }
 
         [Required]
@@ -18,12 +19,12 @@ namespace BibliotheekApp.Models
         [Required]
         public DateTime PublicatieDatum { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
         [Required]
         public int AuteurID { get; set; }
-        public Auteur Auteur { get; set; }
 
+        public Auteur? Auteur { get; set; } = null;
         public ICollection<LidBoek> LidBoeken { get; set; } = new List<LidBoek>();
     }
 }
