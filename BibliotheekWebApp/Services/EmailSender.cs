@@ -1,42 +1,47 @@
-﻿using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.UI.Services;
+
 
 public class EmailSender : IEmailSender
 {
-    private readonly string _smtpServer = "smtp.example.com"; // Vervang dit door jouw SMTP-server
-    private readonly int _smtpPort = 587; // Meestal 587 voor TLS, of 465 voor SSL
-    private readonly string _smtpUsername = "your-email@example.com"; // Jouw e-mailadres
-    private readonly string _smtpPassword = "your-email-password"; // Jouw e-mailwachtwoord
-    private readonly string _fromEmail = "no-reply@example.com"; // Het e-mailadres dat wordt weergegeven als afzender
+    private readonly IConfiguration _configuration;
+
+    public EmailSender(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
 
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        using (var client = new SmtpClient(_smtpServer, _smtpPort))
+        try
         {
-            client.Credentials = new NetworkCredential(_smtpUsername, _smtpPassword);
-            client.EnableSsl = true;
-
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(_fromEmail, "Bibliotheek WebApp"),
+                From = new MailAddress("no-reply@example.com", "Bibliotheek"),
                 Subject = subject,
                 Body = htmlMessage,
                 IsBodyHtml = true
             };
-
             mailMessage.To.Add(email);
 
-            try
+            using var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
             {
-                await client.SendMailAsync(mailMessage);
-            }
-            catch (SmtpException ex)
-            {
-                // Log eventuele e-mailverzendfouten hier
-                throw new InvalidOperationException("E-mail kon niet worden verzonden.", ex);
-            }
+                Credentials = new NetworkCredential("fae21bb2de44ff", "5707294643e839"),
+                EnableSsl = true
+            };
+
+            await client.SendMailAsync(mailMessage);
+            Console.WriteLine("Email successfully sent to " + email);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Email sending failed: " + ex.Message);
+            throw new InvalidOperationException("E-mail kon niet worden verzonden.", ex);
         }
     }
 }
+

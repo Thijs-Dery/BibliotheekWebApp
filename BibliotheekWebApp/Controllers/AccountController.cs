@@ -64,11 +64,19 @@ public class AccountController : Controller
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
 
-                // Stuur verificatie-email
-                await _emailSender.SendEmailAsync(user.Email, "Bevestig je e-mail",
-                    $"Klik op deze link om je e-mailadres te bevestigen: <a href='{confirmationLink}'>Bevestig E-mail</a>");
+                try
+                {
+                    // Stuur verificatie-email via Mailtrap
+                    await _emailSender.SendEmailAsync(user.Email, "Bevestig je e-mail",
+                        $"Klik op deze link om je e-mailadres te bevestigen: <a href='{confirmationLink}'>Bevestig E-mail</a>");
 
-                TempData["Message"] = "Controleer je e-mail om je registratie te voltooien.";
+                    TempData["Message"] = "Controleer je e-mail om je registratie te voltooien.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Fout bij het verzenden van e-mail: {ex.Message}";
+                }
+
                 return RedirectToAction("Index", "Home");
             }
 
