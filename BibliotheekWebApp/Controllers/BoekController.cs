@@ -2,7 +2,6 @@
 using BibliotheekApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 
 namespace BibliotheekApp.Controllers
@@ -18,26 +17,16 @@ namespace BibliotheekApp.Controllers
             _logger = logger;
         }
 
-        // Index: Lijst van boeken
         public IActionResult Index()
         {
             var boeken = _context.Boeken
-                                 .Include(b => b.Auteur) // Laad de auteur gerelateerd aan elk boek
-                                 .Where(b => !b.IsDeleted) // Alleen niet-verwijderde boeken
+                                 .Include(b => b.Auteur)
+                                 .Where(b => !b.IsDeleted)
                                  .ToList();
-
-            foreach (var boek in boeken)
-            {
-                if (boek.Auteur == null)
-                {
-                    boek.Auteur = new Auteur { Naam = "Onbekend" }; // Fallback voor ontbrekende auteurs
-                }
-            }
 
             return View(boeken);
         }
 
-        // Create: Laad formulier voor nieuw boek
         public IActionResult Create()
         {
             ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
@@ -60,16 +49,23 @@ namespace BibliotheekApp.Controllers
             return View(boek);
         }
 
-        // Edit: Haal gegevens op voor bewerken
         public IActionResult Edit(string id)
         {
-            if (string.IsNullOrEmpty(id)) return NotFound();
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Ongeldig boek-ID.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var boek = _context.Boeken
                                .Include(b => b.Auteur)
                                .FirstOrDefault(b => b.ISBN == id && !b.IsDeleted);
 
-            if (boek == null) return NotFound();
+            if (boek == null)
+            {
+                TempData["ErrorMessage"] = "Boek niet gevonden.";
+                return RedirectToAction(nameof(Index));
+            }
 
             ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(boek);
@@ -79,43 +75,66 @@ namespace BibliotheekApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, Boek boek)
         {
-            if (id != boek.ISBN) return NotFound();
+            if (id != boek.ISBN)
+            {
+                TempData["ErrorMessage"] = "Ongeldig boek-ID.";
+                return RedirectToAction(nameof(Index));
+            }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(boek);
-                    _context.SaveChanges();
-                    TempData["SuccessMessage"] = "Boek bijgewerkt!";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException ex)
-                {
-                    _logger.LogError($"Fout bij bijwerken boek: {ex.Message}");
-                    TempData["ErrorMessage"] = "Er is een fout opgetreden bij het bijwerken van het boek.";
-                }
+                _context.Update(boek);
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Boek bijgewerkt!";
+                return RedirectToAction(nameof(Index));
             }
 
             ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(boek);
         }
 
-        // Delete: Verwijder boek
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Delete(string id)
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Ongeldig boek-ID.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var boek = _context.Boeken.Include(b => b.Auteur).FirstOrDefault(b => b.ISBN == id);
+
+            if (boek == null)
+            {
+                TempData["ErrorMessage"] = "Boek niet gevonden.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(boek);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Ongeldig boek-ID.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var boek = _context.Boeken.FirstOrDefault(b => b.ISBN == id);
-            if (boek == null) return NotFound();
 
-            boek.IsDeleted = true; // Markeer als verwijderd
+            if (boek == null)
+            {
+                TempData["ErrorMessage"] = "Boek niet gevonden.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            boek.IsDeleted = true;
             _context.Update(boek);
             _context.SaveChanges();
 
-            TempData["SuccessMessage"] = "Boek succesvol verwijderd!";
+            TempData["SuccessMessage"] = "Boek verwijderd!";
             return RedirectToAction(nameof(Index));
         }
     }

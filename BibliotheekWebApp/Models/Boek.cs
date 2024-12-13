@@ -25,6 +25,7 @@ namespace BibliotheekApp.Models
         public int AuteurID { get; set; }
 
         public Auteur? Auteur { get; set; } = null;
+
         public ICollection<LidBoek> LidBoeken { get; set; } = new List<LidBoek>();
     }
 }

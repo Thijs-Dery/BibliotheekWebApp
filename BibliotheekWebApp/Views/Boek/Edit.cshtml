@@ -25,7 +25,8 @@
 
     <div class="form-group">
         <label asp-for="AuteurID"></label>
-        <select asp-for="AuteurID" class="form-control" asp-items="@(new SelectList(ViewData["Auteurs"] as List<BibliotheekApp.Models.Auteur>, "AuteurID", "Naam", Model.AuteurID))">
+        <select asp-for="AuteurID" class="form-control"
+                asp-items="@(new SelectList(ViewData["Auteurs"] as List<BibliotheekApp.Models.Auteur>, "AuteurID", "Naam", Model.AuteurID))">
             <option value="">Selecteer een auteur</option>
         </select>
         <span asp-validation-for="AuteurID" class="text-danger"></span>
@@ -34,3 +35,4 @@
     <button type="submit" class="btn btn-primary">Opslaan</button>
     <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
 </form>
+

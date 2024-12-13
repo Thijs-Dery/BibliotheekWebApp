@@ -1,8 +1,5 @@
-﻿using BibliotheekApp.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace BibliotheekApp.Models
 {
@@ -19,7 +16,6 @@ namespace BibliotheekApp.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            // Relaties configureren
             modelBuilder.Entity<LidBoek>()
                 .HasKey(lb => lb.LidBoekID);
 
@@ -40,9 +36,6 @@ namespace BibliotheekApp.Models
                 .WithMany(a => a.Boeken)
                 .HasForeignKey(b => b.AuteurID)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // Roep de SeedData klasse aan voor seeding
-            SeedData.Seed(modelBuilder);
         }
     }
 }
