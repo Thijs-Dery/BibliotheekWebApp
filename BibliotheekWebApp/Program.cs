@@ -55,9 +55,10 @@ using (var scope = app.Services.CreateScope())
     await SeedData.InitializeAsync(roleManager, userManager);
 }
 
-// Configure routes
+// Default route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();
