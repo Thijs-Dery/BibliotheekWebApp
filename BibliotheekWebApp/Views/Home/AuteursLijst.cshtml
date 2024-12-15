@@ -26,7 +26,8 @@
                 <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
                 <td>
                     <a href="@Url.Action("Edit", "Auteur", new { id = auteur.AuteurID })" class="btn btn-warning">Bewerken</a>
-                    <form action="@Url.Action("Delete", "Auteur", new { id = auteur.AuteurID })" method="post" style="display:inline;">
+                    <form action="@Url.Action("DeleteConfirmed", "Auteur", new { id = auteur.AuteurID })" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger">Verwijderen</button>
                     </form>
                 </td>

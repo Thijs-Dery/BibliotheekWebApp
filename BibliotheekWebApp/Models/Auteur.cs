@@ -17,6 +17,7 @@ namespace BibliotheekApp.Models
         public DateTime GeboorteDatum { get; set; }
 
         public bool IsDeleted { get; set; } = false;
+
         public ICollection<Boek> Boeken { get; set; } = new List<Boek>();
     }
 }

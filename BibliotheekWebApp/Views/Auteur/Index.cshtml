@@ -1,33 +1,33 @@
 ﻿@model IEnumerable<BibliotheekApp.Models.Auteur>
 
-<h2>Auteurs Lijst</h2>
+@{
+    ViewData["Title"] = "Auteurs Lijst";
+}
 
-<a href="@Url.Action("Create", "Auteur")" class="btn btn-primary">Voeg Auteur Toe</a>
+<h2>Auteurs Lijst</h2>
+<a href="@Url.Action("Create", "Auteur")" class="btn btn-primary mb-3">Voeg Auteur Toe</a>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Auteur ID</th>
+            <th>ID</th>
             <th>Naam</th>
-            <th>Geboorte Datum</th>
+            <th>Geboortedatum</th>
             <th>Acties</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var auteur in Model.Where(a => !a.IsDeleted))
+        @foreach (var auteur in Model)
         {
-            <tr>
-                <td>@auteur.AuteurID</td>
-                <td>@auteur.Naam</td>
-                <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
-                <td>
-                    <a href="@Url.Action("Edit", "Auteur", new { id = auteur.AuteurID })" class="btn btn-warning">Bewerken</a>
-                    <form action="@Url.Action("Delete", "Auteur", new { id = auteur.AuteurID })" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Verwijderen</button>
-                    </form>
-                </td>
-            </tr>
+                <tr>
+                    <td>@auteur.AuteurID</td>
+                    <td>@auteur.Naam</td>
+                    <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Auteur", new { id = auteur.AuteurID })" class="btn btn-warning">Bewerken</a>
+                        <a href="@Url.Action("Delete", "Auteur", new { id = auteur.AuteurID })" class="btn btn-danger">Verwijderen</a>
+                    </td>
+                </tr>
         }
     </tbody>
 </table>
-

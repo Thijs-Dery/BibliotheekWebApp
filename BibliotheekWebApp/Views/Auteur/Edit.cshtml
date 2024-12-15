@@ -1,23 +1,26 @@
 ﻿@model BibliotheekApp.Models.Auteur
 
-<h2>Bewerk Auteur</h2>
+@{
+    ViewData["Title"] = "Auteur Bewerken";
+}
+
+<h2>Auteur Bewerken</h2>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="AuteurID" />
 
     <div class="form-group">
-        <label for="Naam">Naam</label>
-        <input type="text" asp-for="Naam" class="form-control" />
+        <label asp-for="Naam"></label>
+        <input asp-for="Naam" class="form-control" />
         <span asp-validation-for="Naam" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="GeboorteDatum">Geboorte Datum</label>
-        <input type="date" asp-for="GeboorteDatum" class="form-control" />
+        <label asp-for="GeboorteDatum"></label>
+        <input asp-for="GeboorteDatum" class="form-control" />
         <span asp-validation-for="GeboorteDatum" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-warning">Bewaar Wijzigingen</button>
+    <button type="submit" class="btn btn-primary mt-2">Opslaan</button>
+    <a href="@Url.Action("Index", "Auteur")" class="btn btn-secondary mt-2">Annuleren</a>
 </form>
-
-<a href="@Url.Action("Index", "Auteur")" class="btn btn-secondary">Terug naar Auteurslijst</a>

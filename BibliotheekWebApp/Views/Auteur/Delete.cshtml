@@ -1,11 +1,18 @@
 ﻿@model BibliotheekApp.Models.Auteur
 
-<h2>Auteur Verwijderen</h2>
+@{
+    ViewData["Title"] = "Verwijderen";
+}
 
-<h4>Weet je zeker dat je de auteur @Model.Naam wilt verwijderen?</h4>
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="AuteurID" />
-    <button type="submit" class="btn btn-danger">Verwijder</button>
+<h1>Bevestig Verwijderen</h1>
+
+<div class="alert alert-warning" role="alert">
+    Weet je zeker dat je de auteur "<strong>@Model.Naam</strong>" wilt verwijderen?
+</div>
+
+<form asp-action="DeleteConfirmed" asp-route-id="@Model.AuteurID" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.AuteurID" />
+    <button type="submit" class="btn btn-danger">Bevestigen</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
 </form>
-
-<a href="@Url.Action("Index", "Auteur")" class="btn btn-secondary">Annuleer</a>
