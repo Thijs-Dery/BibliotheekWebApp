@@ -26,7 +26,7 @@ namespace BibliotheekApp.Controllers
 
         public IActionResult AuteursLijst()
         {
-            var auteurs = _context.Auteurs.ToList();
+            var auteurs = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(auteurs);
         }
 
