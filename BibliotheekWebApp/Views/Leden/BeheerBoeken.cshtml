@@ -1,0 +1,55 @@
+﻿@model BibliotheekApp.Models.Lid
+@{
+    ViewData["Title"] = "Beheer Boeken";
+    var beschikbareBoeken = ViewBag.BeschikbareBoeken as List<BibliotheekApp.Models.Boek>;
+}
+
+<h2>Beheer Boeken voor @Model.Naam</h2>
+
+<input type="text" id="zoekBoeken" placeholder="Zoek in boekenlijst..." onkeyup="filterTable('boekenTable', this.value)" class="form-control mb-3" />
+
+<table id="boekenTable" class="table">
+    <thead>
+        <tr>
+            <th>Titel</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lb in Model.GeleendeBoeken)
+        {
+            <tr>
+                <td>@lb.Boek.Titel</td>
+                <td>
+                    <form asp-action="VerwijderBoek" method="post">
+                        <input type="hidden" name="lidID" value="@Model.LidID" />
+                        <input type="hidden" name="ISBN" value="@lb.Boek.ISBN" />
+                        <button type="submit" class="btn btn-danger">Verwijderen</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Voeg Boek Toe</h3>
+<form asp-action="VoegBoekToe" method="post">
+    <input type="hidden" name="lidID" value="@Model.LidID" />
+    <select name="ISBN" class="form-control mb-3">
+        <option value="">-- Selecteer een boek --</option>
+        @foreach (var boek in beschikbareBoeken)
+        {
+            <option value="@boek.ISBN">@boek.Titel</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-success">Toevoegen</button>
+</form>
+
+<script>
+    function filterTable(tableID, query) {
+        var rows = document.querySelectorAll(`#${tableID} tbody tr`);
+        rows.forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(query.toLowerCase()) ? "" : "none";
+        });
+    }
+</script>

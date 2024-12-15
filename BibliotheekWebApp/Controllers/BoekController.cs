@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BibliotheekApp.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace BibliotheekApp.Controllers
 {
@@ -40,7 +41,7 @@ namespace BibliotheekApp.Controllers
             {
                 _context.Boeken.Add(boek);
                 _context.SaveChanges();
-                TempData["SuccessMessage"] = "Boek toegevoegd!";
+                TempData["SuccessMessage"] = "Boek succesvol toegevoegd!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -56,6 +57,7 @@ namespace BibliotheekApp.Controllers
             {
                 return NotFound();
             }
+
             ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(boek);
         }
@@ -75,6 +77,7 @@ namespace BibliotheekApp.Controllers
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["Auteurs"] = _context.Auteurs.Where(a => !a.IsDeleted).ToList();
             return View(boek);
         }
@@ -101,6 +104,7 @@ namespace BibliotheekApp.Controllers
                 boek.IsDeleted = true;
                 _context.SaveChanges();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

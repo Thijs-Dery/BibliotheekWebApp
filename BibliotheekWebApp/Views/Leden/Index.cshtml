@@ -19,7 +19,7 @@
                 <td>
                     <a asp-controller="Leden" asp-action="Edit" asp-route-id="@lid.LidID" class="btn btn-warning">Bewerken</a>
                     <a asp-controller="Leden" asp-action="Delete" asp-route-id="@lid.LidID" class="btn btn-danger">Verwijderen</a>
-
+                    <a asp-controller="Leden" asp-action="BeheerBoeken" asp-route-id="@lid.LidID" class="btn btn-info">Beheer Boeken</a>
                 </td>
             </tr>
         }
@@ -27,3 +27,4 @@
 </table>
 
 <a asp-controller="Leden" asp-action="Create" class="btn btn-primary">Voeg Nieuw Lid Toe</a>
+
