@@ -1,0 +1,29 @@
+﻿@model IEnumerable<BibliotheekApp.Models.LidBoek>
+
+@{
+    ViewData["Title"] = "Uitgeleende Boeken";
+}
+
+<h2>Uitgeleende Boeken</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Titel</th>
+            <th>Uitgeleend Aan</th>
+            <th>Uitleendatum</th>
+            <th>Inleverdatum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Boek.Titel</td>
+                <td>@item.Lid.Naam</td>
+                <td>@item.UitleenDatum.ToString("dd-MM-yyyy")</td>
+                <td>@item.InleverDatum.ToString("dd-MM-yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>
