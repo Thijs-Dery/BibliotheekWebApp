@@ -18,7 +18,8 @@ namespace BibliotheekApp.Models
 
         public bool IsDeleted { get; set; }
 
-        public ICollection<LidBoek> GeleendeBoeken { get; set; }
+        // Maak GeleendeBoeken nullable
+        public ICollection<LidBoek>? GeleendeBoeken { get; set; }
     }
 }
 

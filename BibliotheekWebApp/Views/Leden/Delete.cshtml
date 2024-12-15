@@ -2,11 +2,15 @@
 
 <h2>Lid Verwijderen</h2>
 
-<h4>Weet je zeker dat je het lid @Model.Naam wilt verwijderen?</h4>
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="LidID" />
-    <button type="submit" class="btn btn-danger">Verwijder</button>
+<div>
+    <p>Weet je zeker dat je dit lid wilt verwijderen?</p>
+    <p>
+        <strong>Naam:</strong> @Model.Naam <br />
+        <strong>Geboortedatum:</strong> @Model.GeboorteDatum.ToShortDateString()
+    </p>
+</div>
+
+<form asp-action="DeleteConfirmed" asp-route-id="@Model.LidID" method="post">
+    <button type="submit" class="btn btn-danger">Verwijderen</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
 </form>
-
-<a href="@Url.Action("Index", "Lid")" class="btn btn-secondary">Annuleer</a>
-

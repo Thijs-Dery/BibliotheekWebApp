@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace BibliotheekApp.Controllers
 {
+    [Route("Leden")]
     public class LidController : Controller
     {
         private readonly BibliotheekContext _context;
@@ -13,18 +14,21 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
+        [HttpGet("")]
+        [HttpGet("Index")]
         public IActionResult Index()
         {
             var leden = _context.Leden.Where(l => !l.IsDeleted).ToList();
-            return View(leden);
+            return View("~/Views/Leden/Index.cshtml", leden);
         }
 
+        [HttpGet("Create")]
         public IActionResult Create()
         {
-            return View();
+            return View("~/Views/Leden/Create.cshtml");
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Lid lid)
         {
@@ -32,11 +36,14 @@ namespace BibliotheekApp.Controllers
             {
                 _context.Leden.Add(lid);
                 _context.SaveChanges();
+                TempData["SuccessMessage"] = "Lid succesvol toegevoegd!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(lid);
+
+            return View("~/Views/Leden/Create.cshtml", lid);
         }
 
+        [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
             var lid = _context.Leden.Find(id);
@@ -44,10 +51,10 @@ namespace BibliotheekApp.Controllers
             {
                 return NotFound();
             }
-            return View(lid);
+            return View("~/Views/Leden/Edit.cshtml", lid);
         }
 
-        [HttpPost]
+        [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Lid lid)
         {
@@ -60,13 +67,13 @@ namespace BibliotheekApp.Controllers
             {
                 _context.Update(lid);
                 _context.SaveChanges();
+                TempData["SuccessMessage"] = "Lid succesvol bijgewerkt!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(lid);
+            return View("~/Views/Leden/Edit.cshtml", lid);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet("Delete/{id}")]
         public IActionResult Delete(int id)
         {
             var lid = _context.Leden.Find(id);
@@ -74,15 +81,23 @@ namespace BibliotheekApp.Controllers
             {
                 return NotFound();
             }
+            return View("~/Views/Leden/Delete.cshtml", lid);
+        }
 
-            lid.IsDeleted = true;
-            _context.SaveChanges();
+        [HttpPost("Delete/{id}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var lid = _context.Leden.Find(id);
+            if (lid != null)
+            {
+                lid.IsDeleted = true; // Soft delete
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Lid succesvol verwijderd!";
+            }
             return RedirectToAction(nameof(Index));
         }
     }
-
 }
-
-
 
 

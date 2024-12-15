@@ -116,7 +116,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasKey("AuteurID");
 
-                    b.ToTable("Auteurs");
+                    b.ToTable("Auteurs", (string)null);
 
                     b.HasData(
                         new
@@ -161,7 +161,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasIndex("AuteurID");
 
-                    b.ToTable("Boeken");
+                    b.ToTable("Boeken", (string)null);
 
                     b.HasData(
                         new
@@ -205,7 +205,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasKey("LidID");
 
-                    b.ToTable("Leden");
+                    b.ToTable("Leden", (string)null);
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.LidBoek", b =>
@@ -235,7 +235,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasIndex("LidID");
 
-                    b.ToTable("LidBoeken");
+                    b.ToTable("LidBoeken", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

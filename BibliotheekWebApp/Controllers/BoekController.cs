@@ -91,7 +91,7 @@ namespace BibliotheekApp.Controllers
             return View(boek);
         }
 
-        [HttpPost("Delete/{id}")]
+        [HttpPost("DeleteConfirmed/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id)
         {

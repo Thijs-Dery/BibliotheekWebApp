@@ -10,8 +10,10 @@
     Weet je zeker dat je het boek "<strong>@Model.Titel</strong>" wilt verwijderen?
 </div>
 
-<form asp-action="DeleteConfirmed" method="post">
+<form asp-action="DeleteConfirmed" asp-route-id="@Model.ISBN" method="post">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.ISBN" />
-    <button type="submit" class="btn btn-danger">Ja, Verwijderen</button>
+    <button type="submit" class="btn btn-danger">Bevestigen</button>
     <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
 </form>
+
