@@ -134,12 +134,23 @@ namespace BibliotheekApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult VoegBoekToe(int lidID, string ISBN)
         {
+            // Controleer of het boek al is toegewezen aan het lid
+            var bestaandLidBoek = _context.LidBoeken
+                .FirstOrDefault(lb => lb.LidID == lidID && lb.ISBN == ISBN);
+
+            if (bestaandLidBoek != null)
+            {
+                TempData["ErrorMessage"] = "Dit boek is al toegevoegd aan de boekenlijst van dit lid.";
+                return RedirectToAction("BeheerBoeken", new { id = lidID });
+            }
+
+            // Voeg het boek toe aan het lid
             var lidBoek = new LidBoek
             {
                 LidID = lidID,
                 ISBN = ISBN,
                 UitleenDatum = DateTime.Now,
-                InleverDatum = DateTime.Now.AddDays(14) // Standaard uitleentermijn
+                InleverDatum = DateTime.Now.AddDays(14)
             };
 
             _context.LidBoeken.Add(lidBoek);
@@ -147,6 +158,7 @@ namespace BibliotheekApp.Controllers
             TempData["SuccessMessage"] = "Boek succesvol toegevoegd!";
             return RedirectToAction("BeheerBoeken", new { id = lidID });
         }
+
 
         // POST: VerwijderBoek
         [HttpPost("VerwijderBoek")]
