@@ -15,16 +15,27 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
+        [HttpGet("")]
+        [HttpGet("Index")]
         [HttpGet("UitgeleendeBoeken")]
-        public IActionResult UitgeleendeBoeken()
+        public IActionResult Index(string searchTerm)
         {
             var uitgeleendeBoeken = _context.LidBoeken
                 .Include(lb => lb.Lid)
                 .Include(lb => lb.Boek)
                 .Where(lb => !lb.Boek.IsDeleted)
-                .ToList();
+                .AsQueryable();
 
-            return View("~/Views/Uitleen/Index.cshtml", uitgeleendeBoeken);
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                uitgeleendeBoeken = uitgeleendeBoeken.Where(lb =>
+                    lb.Boek.Titel.Contains(searchTerm) ||
+                    lb.Lid.Naam.Contains(searchTerm));
+            }
+
+            return View("~/Views/Uitleen/Index.cshtml", uitgeleendeBoeken.ToList());
         }
+
     }
 }
+

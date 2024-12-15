@@ -13,7 +13,7 @@ public class AccountController : Controller
     {
         _userManager = userManager;
         _signInManager = signInManager;
-        _emailSender = emailSender; // Zorg ervoor dat dit correct wordt toegewezen
+        _emailSender = emailSender;
     }
 
     public IActionResult Login(string returnUrl = null)

@@ -6,11 +6,18 @@
 
 <h2>Uitgeleende Boeken</h2>
 
+<form method="get" asp-action="Index">
+    <div class="input-group mb-3">
+        <input type="text" name="searchTerm" value="@ViewContext.HttpContext.Request.Query["searchTerm"]" class="form-control" placeholder="Zoek op titel of lid naam..." />
+        <button class="btn btn-primary" type="submit">Zoeken</button>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
-            <th>Titel</th>
-            <th>Uitgeleend Aan</th>
+            <th>Boektitel</th>
+            <th>Lid Naam</th>
             <th>Uitleendatum</th>
             <th>Inleverdatum</th>
         </tr>
@@ -27,3 +34,9 @@
         }
     </tbody>
 </table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Geen resultaten gevonden.</p>
+}
+
