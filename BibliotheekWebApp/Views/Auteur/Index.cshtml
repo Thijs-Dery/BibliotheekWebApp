@@ -1,33 +1,41 @@
 ﻿@model IEnumerable<BibliotheekApp.Models.Auteur>
 
-@{
-    ViewData["Title"] = "Auteurs Lijst";
-}
+<h2>Auteurslijst</h2>
 
-<h2>Auteurs Lijst</h2>
-<a href="@Url.Action("Create", "Auteur")" class="btn btn-primary mb-3">Voeg Auteur Toe</a>
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create" class="btn btn-primary mb-3">Voeg Auteur Toe</a>
+}
 
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Naam</th>
             <th>Geboortedatum</th>
-            <th>Acties</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Acties</th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var auteur in Model)
         {
-                <tr>
-                    <td>@auteur.AuteurID</td>
-                    <td>@auteur.Naam</td>
-                    <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
+            <tr>
+                <td>@auteur.Naam</td>
+                <td>@auteur.GeboorteDatum.ToString("dd-MM-yyyy")</td>
+                @if (User.IsInRole("Admin"))
+                {
                     <td>
-                        <a href="@Url.Action("Edit", "Auteur", new { id = auteur.AuteurID })" class="btn btn-warning">Bewerken</a>
-                        <a href="@Url.Action("Delete", "Auteur", new { id = auteur.AuteurID })" class="btn btn-danger">Verwijderen</a>
+                        <a asp-action="Edit" asp-route-id="@auteur.AuteurID" class="btn btn-warning">Bewerken</a>
+                        <form asp-action="Delete" asp-route-id="@auteur.AuteurID" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">Verwijderen</button>
+                        </form>
                     </td>
-                </tr>
+                }
+            </tr>
         }
     </tbody>
 </table>
+

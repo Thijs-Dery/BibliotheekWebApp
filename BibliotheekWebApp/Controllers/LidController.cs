@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotheekApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("Leden")]
     public class LidController : Controller
     {
@@ -15,7 +17,7 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
-        // GET: Leden
+        [Authorize(Roles = "Admin")]
         [HttpGet("")]
         [HttpGet("Index")]
         public IActionResult Index()
@@ -26,14 +28,14 @@ namespace BibliotheekApp.Controllers
             return View("~/Views/Leden/Index.cshtml", leden);
         }
 
-        // GET: Leden/Create
+        [Authorize(Roles = "Admin")]
         [HttpGet("Create")]
         public IActionResult Create()
         {
             return View("~/Views/Leden/Create.cshtml");
         }
 
-        // POST: Leden/Create
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Lid lid)
@@ -49,7 +51,7 @@ namespace BibliotheekApp.Controllers
             return View("~/Views/Leden/Create.cshtml", lid);
         }
 
-        // GET: Leden/Edit/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
@@ -61,7 +63,7 @@ namespace BibliotheekApp.Controllers
             return View("~/Views/Leden/Edit.cshtml", lid);
         }
 
-        // POST: Leden/Edit/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Lid lid)
@@ -81,7 +83,7 @@ namespace BibliotheekApp.Controllers
             return View("~/Views/Leden/Edit.cshtml", lid);
         }
 
-        // GET: Leden/Delete/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public IActionResult Delete(int id)
         {
@@ -93,7 +95,7 @@ namespace BibliotheekApp.Controllers
             return View("~/Views/Leden/Delete.cshtml", lid);
         }
 
-        // POST: Leden/DeleteConfirmed/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -108,7 +110,7 @@ namespace BibliotheekApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: BeheerBoeken/{id}
+        [Authorize(Roles = "Admin")]
         [HttpGet("BeheerBoeken/{id}")]
         public IActionResult BeheerBoeken(int id)
         {
@@ -129,7 +131,7 @@ namespace BibliotheekApp.Controllers
             return View("~/Views/Leden/BeheerBoeken.cshtml", lid);
         }
 
-        // POST: VoegBoekToe
+        [Authorize(Roles = "Admin")]
         [HttpPost("VoegBoekToe")]
         [ValidateAntiForgeryToken]
         public IActionResult VoegBoekToe(int lidID, string ISBN)
@@ -160,7 +162,7 @@ namespace BibliotheekApp.Controllers
         }
 
 
-        // POST: VerwijderBoek
+        [Authorize(Roles = "Admin")]
         [HttpPost("VerwijderBoek")]
         [ValidateAntiForgeryToken]
         public IActionResult VerwijderBoek(int lidID, string ISBN)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BibliotheekApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 
 namespace BibliotheekApp.Controllers
@@ -15,6 +16,7 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
+        // Iedereen kan de boekenlijst zien
         [HttpGet("")]
         [HttpGet("Index")]
         public IActionResult Index()
@@ -26,6 +28,8 @@ namespace BibliotheekApp.Controllers
             return View(boeken);
         }
 
+        // Alleen admin mag een boek toevoegen
+        [Authorize(Roles = "Admin")]
         [HttpGet("Create")]
         public IActionResult Create()
         {
@@ -33,6 +37,7 @@ namespace BibliotheekApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Boek boek)
@@ -49,6 +54,8 @@ namespace BibliotheekApp.Controllers
             return View(boek);
         }
 
+        // Alleen admin mag een boek bewerken
+        [Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(string id)
         {
@@ -62,6 +69,7 @@ namespace BibliotheekApp.Controllers
             return View(boek);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(string id, Boek boek)
@@ -82,6 +90,8 @@ namespace BibliotheekApp.Controllers
             return View(boek);
         }
 
+        // Alleen admin mag een boek verwijderen
+        [Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public IActionResult Delete(string id)
         {
@@ -94,6 +104,7 @@ namespace BibliotheekApp.Controllers
             return View(boek);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("DeleteConfirmed/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(string id)

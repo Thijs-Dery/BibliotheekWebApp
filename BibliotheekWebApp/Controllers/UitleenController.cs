@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotheekApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("Uitleen")]
     public class UitleenController : Controller
     {
@@ -15,6 +17,7 @@ namespace BibliotheekApp.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("")]
         [HttpGet("Index")]
         [HttpGet("UitgeleendeBoeken")]

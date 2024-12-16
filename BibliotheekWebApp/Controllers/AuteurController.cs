@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BibliotheekApp.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotheekApp.Controllers
 {
@@ -22,12 +23,14 @@ namespace BibliotheekApp.Controllers
             return View(auteurs);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("Create")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Auteur auteur)
@@ -42,6 +45,7 @@ namespace BibliotheekApp.Controllers
             return View(auteur);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
@@ -54,6 +58,7 @@ namespace BibliotheekApp.Controllers
             return View(auteur);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Auteur auteur)
@@ -73,6 +78,7 @@ namespace BibliotheekApp.Controllers
             return View(auteur);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public IActionResult Delete(int id)
         {
@@ -85,6 +91,7 @@ namespace BibliotheekApp.Controllers
             return View(auteur);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("DeleteConfirmed/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)

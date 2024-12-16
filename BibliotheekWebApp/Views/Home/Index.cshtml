@@ -5,14 +5,17 @@
 <h2>Welkom bij de Bibliotheek!</h2>
 
 <div>
+    <!-- Knoppen voor alle gebruikers -->
     <a href="@Url.Action("Index", "Boek")" class="btn btn-primary">Bekijk Boeken</a>
     <a href="@Url.Action("Index", "Auteur")" class="btn btn-primary">Bekijk Auteurs</a>
-    <a href="@Url.Action("Index", "Leden")" class="btn btn-primary">Bekijk Leden</a>
 
-    <a href="@Url.Action("Create", "Boek")" class="btn btn-secondary">Voeg Boek Toe</a>
-    <a href="@Url.Action("Create", "Auteur")" class="btn btn-secondary">Voeg Auteur Toe</a>
-    <a href="@Url.Action("Create", "Leden")" class="btn btn-secondary">Voeg Lid Toe</a>
-    <a href="@Url.Action("UitgeleendeBoeken", "Uitleen")" class="btn btn-primary">Bekijk Uitgeleende Boeken</a>
-
-
+    <!-- Admin-only knoppen -->
+    @if (User.IsInRole("Admin"))
+    {
+        <a href="@Url.Action("Index", "Leden")" class="btn btn-primary">Bekijk Leden</a>
+        <a href="@Url.Action("Create", "Boek")" class="btn btn-secondary">Voeg Boek Toe</a>
+        <a href="@Url.Action("Create", "Auteur")" class="btn btn-secondary">Voeg Auteur Toe</a>
+        <a href="@Url.Action("Create", "Leden")" class="btn btn-secondary">Voeg Lid Toe</a>
+        <a href="@Url.Action("UitgeleendeBoeken", "Uitleen")" class="btn btn-primary">Bekijk Uitgeleende Boeken</a>
+    }
 </div>
