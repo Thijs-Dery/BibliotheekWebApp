@@ -22,7 +22,7 @@
                 <td>@boek.Titel</td>
                 <td>@boek.Genre</td>
                 <td>@boek.PublicatieDatum.ToString("dd-MM-yyyy")</td>
-                <td>@boek.Auteur?.Naam ?? "Onbekend"</td>
+                <td>@boek.Auteur?.Naam</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@boek.ISBN" class="btn btn-warning">Bewerken</a>
                     <a asp-action="Delete" asp-route-id="@boek.ISBN" class="btn btn-danger">Verwijderen</a>
