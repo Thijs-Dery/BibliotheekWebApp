@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace BibliotheekApp.Data
 {
@@ -16,12 +17,13 @@ namespace BibliotheekApp.Data
                 new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
             );
 
-            // Tabellen seeden
+            // Auteurs seeden
             modelBuilder.Entity<Auteur>().HasData(
                 new Auteur { AuteurID = 1, Naam = "Auteur 1", GeboorteDatum = new DateTime(1975, 4, 10) },
                 new Auteur { AuteurID = 2, Naam = "Auteur 2", GeboorteDatum = new DateTime(1980, 6, 5) }
             );
 
+            // Boeken seeden
             modelBuilder.Entity<Boek>().HasData(
                 new Boek { ISBN = "9781402894626", Titel = "Frieda Kroket", Genre = "Koken", PublicatieDatum = DateTime.Now, AuteurID = 1 },
                 new Boek { ISBN = "9783161484100", Titel = "Koken met Henk", Genre = "Koken", PublicatieDatum = DateTime.Now, AuteurID = 2 }
@@ -41,17 +43,17 @@ namespace BibliotheekApp.Data
             }
 
             // Admin gebruiker toevoegen
-            var adminUser = new ApplicationUser
+            var adminEmail = "admin@example.com";
+            if (userManager.Users.All(u => u.Email != adminEmail))
             {
-                UserName = "admin@example.com",
-                Email = "admin@example.com",
-                Voornaam = "Admin",
-                Achternaam = "Gebruiker",
-                EmailConfirmed = true
-            };
-
-            if (userManager.Users.All(u => u.UserName != adminUser.UserName))
-            {
+                var adminUser = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    Voornaam = "Admin",
+                    Achternaam = "Gebruiker",
+                    EmailConfirmed = true
+                };
                 var result = await userManager.CreateAsync(adminUser, "Admin123!");
                 if (result.Succeeded)
                 {
@@ -59,18 +61,18 @@ namespace BibliotheekApp.Data
                 }
             }
 
-            // Standaard gebruiker toevoegen
-            var normalUser = new ApplicationUser
+            // Normale gebruiker toevoegen
+            var userEmail = "user@example.com";
+            if (userManager.Users.All(u => u.Email != userEmail))
             {
-                UserName = "user@example.com",
-                Email = "user@example.com",
-                Voornaam = "Normaal",
-                Achternaam = "Gebruiker",
-                EmailConfirmed = true
-            };
-
-            if (userManager.Users.All(u => u.UserName != normalUser.UserName))
-            {
+                var normalUser = new ApplicationUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    Voornaam = "Normaal",
+                    Achternaam = "Gebruiker",
+                    EmailConfirmed = true
+                };
                 var result = await userManager.CreateAsync(normalUser, "User123!");
                 if (result.Succeeded)
                 {
@@ -80,4 +82,3 @@ namespace BibliotheekApp.Data
         }
     }
 }
-

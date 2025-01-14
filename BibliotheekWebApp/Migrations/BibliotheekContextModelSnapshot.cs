@@ -116,23 +116,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasKey("AuteurID");
 
-                    b.ToTable("Auteurs", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            AuteurID = 1,
-                            GeboorteDatum = new DateTime(1975, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Naam = "Auteur 1"
-                        },
-                        new
-                        {
-                            AuteurID = 2,
-                            GeboorteDatum = new DateTime(1980, 6, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            Naam = "Auteur 2"
-                        });
+                    b.ToTable("Auteurs");
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.Boek", b =>
@@ -161,27 +145,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasIndex("AuteurID");
 
-                    b.ToTable("Boeken", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ISBN = "9781402894626",
-                            AuteurID = 1,
-                            Genre = "Koken",
-                            IsDeleted = false,
-                            PublicatieDatum = new DateTime(2024, 12, 7, 19, 2, 25, 844, DateTimeKind.Local).AddTicks(6647),
-                            Titel = "Frieda Kroket"
-                        },
-                        new
-                        {
-                            ISBN = "9783161484100",
-                            AuteurID = 2,
-                            Genre = "Koken",
-                            IsDeleted = false,
-                            PublicatieDatum = new DateTime(2024, 12, 7, 19, 2, 25, 844, DateTimeKind.Local).AddTicks(6711),
-                            Titel = "Koken met Henk"
-                        });
+                    b.ToTable("Boeken");
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.Lid", b =>
@@ -205,7 +169,7 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasKey("LidID");
 
-                    b.ToTable("Leden", (string)null);
+                    b.ToTable("Leden");
                 });
 
             modelBuilder.Entity("BibliotheekApp.Models.LidBoek", b =>
@@ -235,7 +199,35 @@ namespace BibliotheekWebApp.Migrations
 
                     b.HasIndex("LidID");
 
-                    b.ToTable("LidBoeken", (string)null);
+                    b.ToTable("LidBoeken");
+                });
+
+            modelBuilder.Entity("BibliotheekApp.Models.VisitorLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VisitorLogs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -263,20 +255,6 @@ namespace BibliotheekWebApp.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

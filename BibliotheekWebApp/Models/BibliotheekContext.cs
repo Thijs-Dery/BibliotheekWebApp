@@ -9,6 +9,8 @@ namespace BibliotheekApp.Models
         public DbSet<Auteur> Auteurs { get; set; }
         public DbSet<Lid> Leden { get; set; }
         public DbSet<LidBoek> LidBoeken { get; set; }
+        public DbSet<VisitorLog> VisitorLogs { get; set; }
+
 
         public BibliotheekContext(DbContextOptions<BibliotheekContext> options) : base(options) { }
 

@@ -41,6 +41,8 @@ else
     app.UseHsts();
 }
 
+app.UseMiddleware<VisitorLoggingMiddleware>();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
