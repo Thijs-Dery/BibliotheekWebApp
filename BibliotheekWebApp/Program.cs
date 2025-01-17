@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Data;
 using BibliotheekApp.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +20,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<BibliotheekContext>()
 .AddDefaultTokenProviders();
 
-// Configure e-mailservice
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+// Voeg lokalisatie ondersteuning toe
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 // Configure MVC met views
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization(); // Ondersteuning voor Razor View lokalisatie toevoegen
+
+// Configure e-mailservice
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 // Logging configuratie
 builder.Logging.ClearProviders();
@@ -41,8 +47,26 @@ else
     app.UseHsts();
 }
 
-app.UseMiddleware<VisitorLoggingMiddleware>();
+// Voeg custom middleware toe voor cultuurbeheer
+app.UseMiddleware<CustomCultureMiddleware>();
 
+// Configure Request Localization
+var supportedCultures = new[]
+{
+    new CultureInfo("en"), // Engels
+    new CultureInfo("nl"), // Nederlands
+    new CultureInfo("fr")  // Frans
+};
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
+
+// Overige middleware
+app.UseMiddleware<VisitorLoggingMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -61,6 +85,5 @@ using (var scope = app.Services.CreateScope())
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.Run();
