@@ -22,8 +22,9 @@ public class CustomCultureMiddleware
 
         // Gebruik querystring, cookie, of standaardwaarde
         string cultureName = cultureQuery ??
-                             CookieRequestCultureProvider.ParseCookieValue(cultureCookie)?.Cultures[0].Value ??
-                             "en"; // Default to English
+                     CookieRequestCultureProvider.ParseCookieValue(cultureCookie)?.Cultures[0].Value ??
+                     "nl"; // Standaard naar Nederlands
+
 
         // Stel de cultuur in
         CultureInfo culture = new CultureInfo(cultureName);

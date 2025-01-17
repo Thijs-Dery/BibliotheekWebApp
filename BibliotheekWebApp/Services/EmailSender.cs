@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.UI.Services;
-
 
 public class EmailSender : IEmailSender
 {
@@ -19,18 +18,26 @@ public class EmailSender : IEmailSender
     {
         try
         {
+            // Retrieve email settings from configuration
+            var smtpHost = _configuration["EmailSettings:SMTPHost"];
+            var smtpPort = int.Parse(_configuration["EmailSettings:SMTPPort"]);
+            var smtpUsername = _configuration["EmailSettings:SMTPUsername"];
+            var smtpPassword = _configuration["EmailSettings:SMTPPassword"];
+            var fromEmail = _configuration["EmailSettings:FromEmail"];
+            var fromName = _configuration["EmailSettings:FromName"];
+
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("no-reply@example.com", "Bibliotheek"),
+                From = new MailAddress(fromEmail, fromName),
                 Subject = subject,
                 Body = htmlMessage,
                 IsBodyHtml = true
             };
             mailMessage.To.Add(email);
 
-            using var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
+            using var client = new SmtpClient(smtpHost, smtpPort)
             {
-                Credentials = new NetworkCredential("fae21bb2de44ff", "5707294643e839"),
+                Credentials = new NetworkCredential(smtpUsername, smtpPassword),
                 EnableSsl = true
             };
 
@@ -40,8 +47,7 @@ public class EmailSender : IEmailSender
         catch (Exception ex)
         {
             Console.WriteLine("Email sending failed: " + ex.Message);
-            throw new InvalidOperationException("E-mail kon niet worden verzonden.", ex);
+            throw new InvalidOperationException("E-mail could not be sent.", ex);
         }
     }
 }
-

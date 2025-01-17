@@ -1,5 +1,5 @@
 ﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
-
+@using System.Globalization
 
 <!DOCTYPE html>
 <html>
@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">@Localizer["Library"]</a>
+            <a class="navbar-brand" href="/">@Localizer["Bibliotheek"]</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -24,28 +24,40 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="@Url.Action("Panel", "Admin")">@Localizer["AdminPanel"]</a>
+                                <a class="nav-link" href="@Url.Action("Panel", "Admin")">@Localizer["AdminPaneel"]</a>
                             </li>
                         }
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Logout", "Account")">@Localizer["Logout"]</a>
+                            <a class="nav-link" href="@Url.Action("Logout", "Account")">@Localizer["Uitloggen"]</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Login", "Account")">@Localizer["Login"]</a>
+                            <a class="nav-link" href="@Url.Action("Login", "Account")">@Localizer["Inloggen"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Register", "Account")">@Localizer["Register"]</a>
+                            <a class="nav-link" href="@Url.Action("Register", "Account")">@Localizer["Registreren"]</a>
                         </li>
                     }
                 </ul>
                 <form method="post" asp-controller="Home" asp-action="SetLanguage" class="ms-auto">
+                    @{
+                        var currentCulture = CultureInfo.CurrentUICulture.Name;
+                        var supportedCultures = new List<(string Value, string DisplayName)>
+                    {
+                    ("nl", "Nederlands"),
+                    ("en", "English"),
+                    ("fr", "Français")
+                    };
+                    }
                     <select name="culture" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="en">English</option>
-                        <option value="nl">Nederlands</option>
-                        <option value="fr">Français</option>
+                        @foreach (var culture in supportedCultures)
+                        {
+                            <option value="@culture.Value" selected="@(culture.Value == currentCulture ? "selected" : null)">
+                                @culture.DisplayName
+                            </option>
+                        }
                     </select>
                 </form>
             </div>
