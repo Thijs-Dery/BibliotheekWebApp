@@ -12,7 +12,6 @@ namespace BibliotheekApp.Models
         public DbSet<LidBoek> LidBoeken { get; set; }
         public DbSet<VisitorLog> VisitorLogs { get; set; }
 
-
         public BibliotheekContext(DbContextOptions<BibliotheekContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,14 +31,16 @@ namespace BibliotheekApp.Models
                 .HasOne(lb => lb.Boek)
                 .WithMany(b => b.LidBoeken)
                 .HasForeignKey(lb => lb.ISBN)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Boek>()
                 .HasOne(b => b.Auteur)
                 .WithMany(a => a.Boeken)
                 .HasForeignKey(b => b.AuteurID)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
+
+            Console.WriteLine("Applying seed data...");
             SeedData.Seed(modelBuilder);
         }
     }

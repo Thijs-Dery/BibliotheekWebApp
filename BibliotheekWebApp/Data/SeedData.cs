@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using BibliotheekApp.Models;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BibliotheekApp.Data
 {
@@ -13,22 +11,21 @@ namespace BibliotheekApp.Data
         {
             // Rollen seeden
             modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "Admin", NormalizedName = "ADMIN" },
-                new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "User", NormalizedName = "USER" }
+                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
             );
 
             // Auteurs seeden
             modelBuilder.Entity<Auteur>().HasData(
                 new Auteur { AuteurID = 1, Naam = "Auteur 1", GeboorteDatum = new DateTime(1975, 4, 10) },
-                new Auteur { AuteurID = 2, Naam = "Auteur 2", GeboorteDatum = new DateTime(1980, 6, 5) },
-                new Auteur { AuteurID = 3, Naam = "Auteur 3", GeboorteDatum = new DateTime(1990, 1, 1) },
-                new Auteur { AuteurID = 4, Naam = "Auteur 4", GeboorteDatum = new DateTime(2000, 7, 15) }
+                new Auteur { AuteurID = 2, Naam = "Auteur 2", GeboorteDatum = new DateTime(1980, 6, 5) }
             );
 
-            // Boeken seeden
+            // Boeken seeden (Gebruik een vaste PublicatieDatum)
+            var fixedDate = new DateTime(2023, 1, 1); // Vaste datum voor consistentie
             modelBuilder.Entity<Boek>().HasData(
-                new Boek { ISBN = "9781234567890", Titel = "Boek 1", Genre = "Fictie", PublicatieDatum = DateTime.Now, AuteurID = 1 },
-                new Boek { ISBN = "9780987654321", Titel = "Boek 2", Genre = "Non-fictie", PublicatieDatum = DateTime.Now, AuteurID = 2 }
+                new Boek { ISBN = "9781402894626", Titel = "Frieda Kroket", Genre = "Koken", PublicatieDatum = fixedDate, AuteurID = 1 },
+                new Boek { ISBN = "9783161484100", Titel = "Koken met Henk", Genre = "Koken", PublicatieDatum = fixedDate, AuteurID = 2 }
             );
         }
 
@@ -45,13 +42,12 @@ namespace BibliotheekApp.Data
             }
 
             // Admin gebruiker toevoegen
-            var adminEmail = "admin@example.com";
-            if (userManager.Users.All(u => u.Email != adminEmail))
+            if (!userManager.Users.Any(u => u.UserName == "admin@example.com"))
             {
                 var adminUser = new ApplicationUser
                 {
-                    UserName = adminEmail,
-                    Email = adminEmail,
+                    UserName = "admin@example.com",
+                    Email = "admin@example.com",
                     Voornaam = "Admin",
                     Achternaam = "Gebruiker",
                     EmailConfirmed = true
@@ -64,13 +60,12 @@ namespace BibliotheekApp.Data
             }
 
             // Normale gebruiker toevoegen
-            var userEmail = "user@example.com";
-            if (userManager.Users.All(u => u.Email != userEmail))
+            if (!userManager.Users.Any(u => u.UserName == "user@example.com"))
             {
                 var normalUser = new ApplicationUser
                 {
-                    UserName = userEmail,
-                    Email = userEmail,
+                    UserName = "user@example.com",
+                    Email = "user@example.com",
                     Voornaam = "Normaal",
                     Achternaam = "Gebruiker",
                     EmailConfirmed = true

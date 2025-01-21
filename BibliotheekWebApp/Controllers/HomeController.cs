@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace BibliotheekApp.Controllers
 {
@@ -8,6 +9,12 @@ namespace BibliotheekApp.Controllers
         [HttpPost]
         public IActionResult SetLanguage(string culture)
         {
+            var supportedCultures = new[] { "nl", "en", "fr" };
+            if (!supportedCultures.Contains(culture))
+            {
+                return BadRequest("Unsupported culture.");
+            }
+
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),

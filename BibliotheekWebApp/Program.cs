@@ -5,6 +5,8 @@ using BibliotheekApp.Models;
 using BibliotheekApp.Data;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +17,7 @@ builder.Services.AddDbContext<BibliotheekContext>(options =>
 // Add Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedEmail = false; // Set to true if you want email confirmation
+    options.SignIn.RequireConfirmedEmail = false;
 })
 .AddEntityFrameworkStores<BibliotheekContext>()
 .AddDefaultTokenProviders();
@@ -26,12 +28,15 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 // Add EmailSender implementation
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+// Add MVC (for TempData and full MVC features)
+builder.Services.AddMvc();
+
 // Configure MVC and localization
 builder.Services.AddControllersWithViews()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
-// Configure JSON options to prevent cycles
+// Prevent JSON cycles and configure formatting
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -42,13 +47,20 @@ builder.Services.AddControllers()
 // Configure supported cultures
 var supportedCultures = new[]
 {
-    new CultureInfo("nl"), // Dutch
-    new CultureInfo("en"), // English
-    new CultureInfo("fr")  // French
+    new CultureInfo("nl"),
+    new CultureInfo("en"),
+    new CultureInfo("fr")
 };
 
-// Build the app
 var app = builder.Build();
+
+// Seed database during startup
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    await SeedData.InitializeAsync(roleManager, userManager);
+}
 
 // Middleware pipeline
 app.UseHttpsRedirection();
@@ -65,9 +77,11 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 });
 
-// Map default routes
+// Map routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllers();
 
 app.Run();
