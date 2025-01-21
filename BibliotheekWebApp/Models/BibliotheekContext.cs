@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using BibliotheekApp.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BibliotheekApp.Models
@@ -38,6 +39,8 @@ namespace BibliotheekApp.Models
                 .WithMany(a => a.Boeken)
                 .HasForeignKey(b => b.AuteurID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            SeedData.Seed(modelBuilder);
         }
     }
 }

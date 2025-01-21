@@ -28,6 +28,30 @@ namespace BibliotheekApp.Controllers
             return View(boeken);
         }
 
+        // AJAX-zoekfunctionaliteit
+        [HttpGet("Search")]
+        public IActionResult Search(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                // Geef alle boeken terug als er geen zoekopdracht is
+                var allBoeken = _context.Boeken
+                                        .Include(b => b.Auteur)
+                                        .Where(b => !b.IsDeleted)
+                                        .ToList();
+                return PartialView("_BoekSearchResults", allBoeken);
+            }
+
+            // Zoek boeken op titel of auteur
+            var filteredBoeken = _context.Boeken
+                                         .Include(b => b.Auteur)
+                                         .Where(b => !b.IsDeleted &&
+                                                     (b.Titel.Contains(query) || b.Auteur.Naam.Contains(query)))
+                                         .ToList();
+
+            return PartialView("_BoekSearchResults", filteredBoeken);
+        }
+
         // Alleen admin mag een boek toevoegen
         [Authorize(Roles = "Admin")]
         [HttpGet("Create")]

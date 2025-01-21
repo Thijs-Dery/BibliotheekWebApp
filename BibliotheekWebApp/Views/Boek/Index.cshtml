@@ -1,27 +1,31 @@
 ﻿@model IEnumerable<BibliotheekApp.Models.Boek>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
-<h2>Boekenlijst</h2>
+<h2>@Localizer["Book List"]</h2>
 
 @if (User.IsInRole("Admin"))
 {
-    <a asp-action="Create" class="btn btn-primary mb-3">Voeg Boek Toe</a>
+    <a asp-action="Create" class="btn btn-primary mb-3">@Localizer["Add Book"]</a>
 }
+
+<!-- Zoekbalk -->
+<input type="text" id="searchBox" class="form-control mb-3" placeholder="@Localizer["Search for books..."]" />
 
 <table class="table">
     <thead>
         <tr>
-            <th>ISBN</th>
-            <th>Titel</th>
-            <th>Genre</th>
-            <th>Publicatie Datum</th>
-            <th>Auteur</th>
+            <th>@Localizer["ISBN"]</th>
+            <th>@Localizer["Title"]</th>
+            <th>@Localizer["Genre"]</th>
+            <th>@Localizer["Publication Date"]</th>
+            <th>@Localizer["Author"]</th>
             @if (User.IsInRole("Admin"))
             {
-                <th>Acties</th>
+                <th>@Localizer["Actions"]</th>
             }
         </tr>
     </thead>
-    <tbody>
+    <tbody id="resultTable">
         @foreach (var boek in Model)
         {
             <tr>
@@ -33,11 +37,30 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <td>
-                        <a asp-action="Edit" asp-route-id="@boek.ISBN" class="btn btn-warning">Bewerken</a>
-                        <a asp-action="Delete" asp-route-id="@boek.ISBN" class="btn btn-danger">Verwijderen</a>
+                        <a asp-action="Edit" asp-route-id="@boek.ISBN" class="btn btn-warning">@Localizer["Edit"]</a>
+                        <a asp-action="Delete" asp-route-id="@boek.ISBN" class="btn btn-danger">@Localizer["Delete"]</a>
                     </td>
                 }
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    $(document).ready(function () {
+        $("#searchBox").on("input", function () {
+            const query = $(this).val();
+            $.ajax({
+                url: "/Boek/Search",
+                type: "GET",
+                data: { query: query },
+                success: function (data) {
+                    $("#resultTable").html(data);
+                },
+                error: function () {
+                    alert("@Localizer["Error loading search results."]");
+                }
+            });
+        });
+    });
+</script>
