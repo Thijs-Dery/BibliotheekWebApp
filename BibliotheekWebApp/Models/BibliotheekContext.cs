@@ -1,4 +1,5 @@
 ﻿using BibliotheekApp.Data;
+using BibliotheekWebApp.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,9 @@ namespace BibliotheekApp.Models
         public DbSet<Lid> Leden { get; set; }
         public DbSet<LidBoek> LidBoeken { get; set; }
         public DbSet<VisitorLog> VisitorLogs { get; set; }
+        public DbSet<Reservatie> Reservaties { get; set; }
+
+
 
         public BibliotheekContext(DbContextOptions<BibliotheekContext> options) : base(options) { }
 

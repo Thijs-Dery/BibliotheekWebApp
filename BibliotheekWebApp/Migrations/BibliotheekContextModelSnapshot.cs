@@ -266,6 +266,32 @@ namespace BibliotheekWebApp.Migrations
                     b.ToTable("VisitorLogs");
                 });
 
+            modelBuilder.Entity("BibliotheekWebApp.Models.Reservatie", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BoekId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GebruikerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReservatieDatum")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Verwerkt")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reservaties");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -418,7 +444,7 @@ namespace BibliotheekWebApp.Migrations
                     b.HasOne("BibliotheekApp.Models.Auteur", "Auteur")
                         .WithMany("Boeken")
                         .HasForeignKey("AuteurID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Auteur");
@@ -429,7 +455,7 @@ namespace BibliotheekWebApp.Migrations
                     b.HasOne("BibliotheekApp.Models.Boek", "Boek")
                         .WithMany("LidBoeken")
                         .HasForeignKey("ISBN")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("BibliotheekApp.Models.Lid", "Lid")

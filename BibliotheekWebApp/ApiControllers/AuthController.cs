@@ -29,7 +29,7 @@ namespace BibliotheekApp.ApiControllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _userManager.FindByNameAsync(loginDto.Username);
+            var user = await _userManager.FindByEmailAsync(loginDto.Username); // <-- Belangrijk
             if (user == null) return Unauthorized("Invalid credentials");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
@@ -38,8 +38,9 @@ namespace BibliotheekApp.ApiControllers
             // Generate JWT token
             var token = GenerateJwtToken(user);
 
-            return Ok(new { Token = token });
+            return Ok(new { token });
         }
+
 
         private string GenerateJwtToken(ApplicationUser user)
         {
