@@ -1,8 +1,10 @@
 ﻿using BibliotheekApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class BoekApiController : ControllerBase

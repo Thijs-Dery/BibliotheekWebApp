@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotheekApp.ApiControllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LidApiController : ControllerBase

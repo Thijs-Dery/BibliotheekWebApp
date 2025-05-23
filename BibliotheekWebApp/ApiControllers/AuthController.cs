@@ -6,11 +6,13 @@ using System.Text;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BibliotheekApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BibliotheekApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -23,7 +25,7 @@ namespace BibliotheekApp.ApiControllers
             _signInManager = signInManager;
             _configuration = configuration;
         }
-
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {

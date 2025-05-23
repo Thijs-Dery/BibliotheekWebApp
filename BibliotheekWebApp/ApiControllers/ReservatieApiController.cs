@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace BibliotheekWebApp.ApiControllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ReservatieApiController : ControllerBase
     {
         private readonly BibliotheekContext _context;
@@ -24,27 +23,41 @@ namespace BibliotheekWebApp.ApiControllers
             _userManager = userManager;
         }
 
-        // POST: api/reservaties
+        // POST: api/reservatieapi
         [HttpPost]
         public async Task<IActionResult> ReserveerBoek([FromBody] Reservatie reservatie)
         {
+            // 🔐 Haal de ingelogde gebruiker-ID op vanuit het JWT-token
+            var gebruikerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(gebruikerId))
+                return Unauthorized("Geen geldige gebruiker gevonden.");
+
+            // Overschrijf mogelijk gemanipuleerde waarde
+            reservatie.GebruikerId = gebruikerId;
             reservatie.ReservatieDatum = DateTime.UtcNow;
             reservatie.Verwerkt = false;
+
             _context.Reservaties.Add(reservatie);
             await _context.SaveChangesAsync();
 
             return Ok(reservatie);
         }
 
-        // GET: api/reservaties/user
+        // GET: api/reservatieapi/user
         [HttpGet("user")]
         public async Task<ActionResult<IEnumerable<Reservatie>>> GetGebruikerReservaties()
         {
             var gebruikerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return await _context.Reservaties
+
+            if (string.IsNullOrEmpty(gebruikerId))
+                return Unauthorized("Geen geldige gebruiker gevonden.");
+
+            var reservaties = await _context.Reservaties
                 .Where(r => r.GebruikerId == gebruikerId)
                 .ToListAsync();
+
+            return reservaties;
         }
     }
-
 }
