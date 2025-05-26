@@ -8,6 +8,7 @@ INSTALLEREN/GEBRUIK VAN DE APPLICATIE:
 2) Ga bovenaan in het menu naar Tools --> NuGet Package Manager --> Package Manager Console
 3) Typ onderaan in de terminal/console die net is geopend "Update-Database"
 4) Wacht tot het de database geinstalleerd heeft en klik dan bovenaan op de startknop
+5) ga naar https://bibliotheekwebapp20250522192153-fkcrfycgawhafeha.canadacentral-01.azurewebsites.net/
 
 Om de applicatie te testen kan er gebruik gemaakt worden van echte ISBN codes/nummers, de applicatie accepteerd ISBN 10 en ISBN 13. Hier zijn een aantal ISBN's voor het gemak om te testen. Er is ook de optie om geen ISBN in te geven bij het aanmaken van een boek in de applicatie. Om de database te gebruiken moet er eerst in de NuGet Package Manager console "Update-Database" uitgevoerd worden.
 
