@@ -13,16 +13,18 @@ namespace BibliotheekApp.Models
         [StringLength(200)]
         public string Naam { get; set; }
 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        public string? IdentityUserId { get; set; }
+
+
         [DataType(DataType.Date)]
         public DateTime GeboorteDatum { get; set; }
 
         public bool IsDeleted { get; set; }
 
-        // Maak GeleendeBoeken nullable
         public ICollection<LidBoek>? GeleendeBoeken { get; set; }
     }
 }
-
-
-
-

@@ -7,52 +7,98 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using BibliotheekApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace BibliotheekApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly BibliotheekContext _context;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IConfiguration configuration,
+            BibliotheekContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _context = context;
         }
+
         [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _userManager.FindByEmailAsync(loginDto.Username); // <-- Belangrijk
+            var user = await _userManager.FindByEmailAsync(loginDto.Username);
             if (user == null) return Unauthorized("Invalid credentials");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (!result.Succeeded) return Unauthorized("Invalid credentials");
 
-            // Generate JWT token
-            var token = GenerateJwtToken(user);
-
+            var token = await GenerateJwtToken(user);
             return Ok(new { token });
         }
 
-
-        private string GenerateJwtToken(ApplicationUser user)
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            var claims = new[]
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var user = new ApplicationUser
+            {
+                UserName = dto.Email,
+                Email = dto.Email,
+                Voornaam = dto.Naam,
+                Achternaam = dto.Achternaam,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            await _userManager.AddToRoleAsync(user, "User");
+
+            var lid = new Lid
+            {
+                Naam = dto.Naam,
+                Email = dto.Email,
+                GeboorteDatum = dto.GeboorteDatum,
+                IdentityUserId = user.Id,
+                IsDeleted = false
+            };
+
+            _context.Leden.Add(lid);
+            await _context.SaveChangesAsync();
+
+            return Ok("Account en lid succesvol aangemaakt.");
+        }
+
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Role, "User") // Customize as needed
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -73,5 +119,14 @@ namespace BibliotheekApp.ApiControllers
     {
         public string Username { get; set; }
         public string Password { get; set; }
+    }
+
+    public class RegisterDto
+    {
+        public string Naam { get; set; }
+        public string Achternaam { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public DateTime GeboorteDatum { get; set; }
     }
 }

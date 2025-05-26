@@ -2,120 +2,110 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
-public class AccountController : Controller
+namespace BibliotheekWebApp.Controllers
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IEmailSender _emailSender;
-
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+    public class AccountController : Controller
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _emailSender = emailSender;
-    }
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailSender _emailSender;
 
-    public IActionResult Login(string returnUrl = null)
-    {
-        ViewData["ReturnUrl"] = returnUrl;
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
-    {
-        ViewData["ReturnUrl"] = returnUrl;
-        if (ModelState.IsValid)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IEmailSender emailSender)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _emailSender = emailSender;
+        }
+
+        [HttpGet]
+        public IActionResult Login(string returnUrl = "/")
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = "/")
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Ongeldige inloggegevens.");
+                return View(model);
+            }
+
+            // Sla email-confirmatiecontrole over
+            var result = await _signInManager.PasswordSignInAsync(
+                user.UserName,
+                model.Password,
+                model.RememberMe,
+                lockoutOnFailure: false);
+
             if (result.Succeeded)
             {
-                return LocalRedirect(returnUrl ?? "/");
+                return LocalRedirect(returnUrl);
             }
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+
+            ModelState.AddModelError(string.Empty, "Ongeldige inloggegevens.");
+            return View(model);
         }
-        return View(model);
-    }
 
-    public IActionResult Register()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(RegisterViewModel model)
-    {
-        if (ModelState.IsValid)
+        [HttpGet]
+        public IActionResult Register()
         {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
             var user = new ApplicationUser
             {
                 UserName = model.Email,
                 Email = model.Email,
                 Voornaam = model.Voornaam,
-                Achternaam = model.Achternaam
+                Achternaam = model.Achternaam,
+                EmailConfirmed = true // <-- Verifieer automatisch bij registratie
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
+
             if (result.Succeeded)
             {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
-
-                try
-                {
-                    // Stuur verificatie-email via Mailtrap
-                    await _emailSender.SendEmailAsync(user.Email, "Bevestig je e-mail",
-                        $"Klik op deze link om je e-mailadres te bevestigen: <a href='{confirmationLink}'>Bevestig E-mail</a>");
-
-                    TempData["Message"] = "Controleer je e-mail om je registratie te voltooien.";
-                }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = $"Fout bij het verzenden van e-mail: {ex.Message}";
-                }
-
-                return RedirectToAction("Index", "Home");
+                TempData["Message"] = "Registratie succesvol afgerond.";
+                return RedirectToAction("Login", "Account");
             }
 
             foreach (var error in result.Errors)
-            {
                 ModelState.AddModelError(string.Empty, error.Description);
-            }
+
+            return View(model);
         }
 
-        return View(model);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> ConfirmEmail(string userId, string token)
-    {
-        if (userId == null || token == null) return BadRequest();
-
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return NotFound();
-
-        var result = await _userManager.ConfirmEmailAsync(user, token);
-        if (result.Succeeded)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
         {
-            TempData["Message"] = "E-mail succesvol bevestigd.";
-            return RedirectToAction("Login", "Account");
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
-        TempData["ErrorMessage"] = "E-mailbevestiging mislukt.";
-        return RedirectToAction("Index", "Home");
-    }
-
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return RedirectToAction("Index", "Home");
-    }
-
-    public IActionResult AccessDenied()
-    {
-        return View();
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
