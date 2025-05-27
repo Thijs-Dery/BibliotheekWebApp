@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BibliotheekApp.ApiControllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LidApiController : ControllerBase
@@ -22,6 +22,7 @@ namespace BibliotheekApp.ApiControllers
 
         // GET: api/LidApi
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Lid>>> GetLeden()
         {
             return await _context.Leden
@@ -31,6 +32,7 @@ namespace BibliotheekApp.ApiControllers
 
         // GET: api/LidApi/{id}
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Lid>> GetLid(int id)
         {
             var lid = await _context.Leden
@@ -39,22 +41,18 @@ namespace BibliotheekApp.ApiControllers
                                     .FirstOrDefaultAsync(l => l.LidID == id && !l.IsDeleted);
 
             if (lid == null)
-            {
                 return NotFound();
-            }
 
             return lid;
         }
 
         // POST: api/LidApi
-        [Authorize(Roles = "Admin")]
         [HttpPost]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<Lid>> CreateLid(Lid lid)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
             _context.Leden.Add(lid);
             await _context.SaveChangesAsync();
@@ -63,19 +61,15 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // PUT: api/LidApi/{id}
-        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdateLid(int id, Lid lid)
         {
             if (id != lid.LidID)
-            {
                 return BadRequest("Lid ID komt niet overeen.");
-            }
 
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
             _context.Entry(lid).State = EntityState.Modified;
 
@@ -86,9 +80,8 @@ namespace BibliotheekApp.ApiControllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!LidExists(id))
-                {
                     return NotFound();
-                }
+
                 throw;
             }
 
@@ -96,15 +89,13 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // DELETE: api/LidApi/{id}
-        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> DeleteLid(int id)
         {
             var lid = await _context.Leden.FirstOrDefaultAsync(l => l.LidID == id);
             if (lid == null || lid.IsDeleted)
-            {
                 return NotFound();
-            }
 
             lid.IsDeleted = true;
             await _context.SaveChangesAsync();
@@ -113,49 +104,45 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // POST: api/LidApi/VoegBoekToe
-        [Authorize(Roles = "Admin")]
         [HttpPost("VoegBoekToe")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> VoegBoekToe(int lidID, string ISBN)
         {
             var bestaandLidBoek = await _context.LidBoeken
                                                 .FirstOrDefaultAsync(lb => lb.LidID == lidID && lb.ISBN == ISBN);
 
             if (bestaandLidBoek != null)
-            {
-                return BadRequest("Dit boek is al toegevoegd aan de boekenlijst van dit lid.");
-            }
+                return BadRequest("Boek is al toegevoegd aan dit lid.");
 
             var lidBoek = new LidBoek
             {
                 LidID = lidID,
                 ISBN = ISBN,
-                UitleenDatum = System.DateTime.Now,
-                InleverDatum = System.DateTime.Now.AddDays(14)
+                UitleenDatum = DateTime.Now,
+                InleverDatum = DateTime.Now.AddDays(14)
             };
 
             _context.LidBoeken.Add(lidBoek);
             await _context.SaveChangesAsync();
 
-            return Ok("Boek succesvol toegevoegd.");
+            return Ok("Boek toegevoegd.");
         }
 
-        // DELETE: api/LidApi/VerwijderBoek
-        [Authorize(Roles = "Admin")]
+        // POST: api/LidApi/VerwijderBoek
         [HttpPost("VerwijderBoek")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> VerwijderBoek(int lidID, string ISBN)
         {
             var lidBoek = await _context.LidBoeken
                                         .FirstOrDefaultAsync(lb => lb.LidID == lidID && lb.ISBN == ISBN);
 
             if (lidBoek == null)
-            {
                 return NotFound();
-            }
 
             _context.LidBoeken.Remove(lidBoek);
             await _context.SaveChangesAsync();
 
-            return Ok("Boek succesvol verwijderd.");
+            return Ok("Boek verwijderd.");
         }
 
         private bool LidExists(int id)

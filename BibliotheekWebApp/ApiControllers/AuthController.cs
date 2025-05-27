@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using BibliotheekApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace BibliotheekApp.ApiControllers
 {
@@ -37,23 +36,33 @@ namespace BibliotheekApp.ApiControllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var user = await _userManager.FindByEmailAsync(loginDto.Username);
-            if (user == null) return Unauthorized("Invalid credentials");
+            if (user == null)
+                return Unauthorized("Invalid credentials");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-            if (!result.Succeeded) return Unauthorized("Invalid credentials");
+            if (!result.Succeeded)
+                return Unauthorized("Invalid credentials");
 
             var token = await GenerateJwtToken(user);
-            return Ok(new { token });
+
+            return Ok(new
+            {
+                token,
+                username = user.UserName,
+                roles = await _userManager.GetRolesAsync(user)
+            });
         }
 
         [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var user = new ApplicationUser
             {
@@ -65,7 +74,8 @@ namespace BibliotheekApp.ApiControllers
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
 
             await _userManager.AddToRoleAsync(user, "User");
 
@@ -81,12 +91,20 @@ namespace BibliotheekApp.ApiControllers
             _context.Leden.Add(lid);
             await _context.SaveChangesAsync();
 
-            return Ok("Account en lid succesvol aangemaakt.");
+            var token = await GenerateJwtToken(user);
+
+            return Ok(new
+            {
+                message = "Account en lid succesvol aangemaakt.",
+                token,
+                username = user.UserName,
+                roles = await _userManager.GetRolesAsync(user)
+            });
         }
 
         private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
             var claims = new List<Claim>
             {
@@ -95,7 +113,7 @@ namespace BibliotheekApp.ApiControllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-            foreach (var role in userRoles)
+            foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }

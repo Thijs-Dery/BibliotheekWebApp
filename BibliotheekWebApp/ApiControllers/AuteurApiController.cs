@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BibliotheekApp.ApiControllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuteurApiController : ControllerBase
@@ -21,6 +21,7 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // GET: api/AuteurApi
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auteur>>> GetAuteurs()
         {
@@ -30,6 +31,7 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // GET: api/AuteurApi/{id}
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Auteur>> GetAuteur(int id)
         {
@@ -44,7 +46,7 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // POST: api/AuteurApi
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<ActionResult<Auteur>> CreateAuteur(Auteur auteur)
         {
@@ -60,7 +62,7 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // PUT: api/AuteurApi/{id}
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAuteur(int id, Auteur auteur)
         {
@@ -93,7 +95,7 @@ namespace BibliotheekApp.ApiControllers
         }
 
         // DELETE: api/AuteurApi/{id}
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuteur(int id)
         {

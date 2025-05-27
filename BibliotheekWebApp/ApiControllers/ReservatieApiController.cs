@@ -1,11 +1,10 @@
 ﻿using BibliotheekApp.Models;
 using BibliotheekWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BibliotheekWebApp.ApiControllers
 {
@@ -27,13 +26,10 @@ namespace BibliotheekWebApp.ApiControllers
         [HttpPost]
         public async Task<IActionResult> ReserveerBoek([FromBody] Reservatie reservatie)
         {
-            // 🔐 Haal de ingelogde gebruiker-ID op vanuit het JWT-token
             var gebruikerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (string.IsNullOrEmpty(gebruikerId))
                 return Unauthorized("Geen geldige gebruiker gevonden.");
 
-            // Overschrijf mogelijk gemanipuleerde waarde
             reservatie.GebruikerId = gebruikerId;
             reservatie.ReservatieDatum = DateTime.UtcNow;
             reservatie.Verwerkt = false;
@@ -49,7 +45,6 @@ namespace BibliotheekWebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<Reservatie>>> GetGebruikerReservaties()
         {
             var gebruikerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (string.IsNullOrEmpty(gebruikerId))
                 return Unauthorized("Geen geldige gebruiker gevonden.");
 
