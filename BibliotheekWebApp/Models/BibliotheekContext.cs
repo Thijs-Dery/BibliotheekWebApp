@@ -13,6 +13,7 @@ namespace BibliotheekApp.Models
         public DbSet<LidBoek> LidBoeken { get; set; }
         public DbSet<VisitorLog> VisitorLogs { get; set; }
         public DbSet<Reservatie> Reservaties { get; set; }
+        public DbSet<Favoriet> Favorieten { get; set; }
 
 
 
