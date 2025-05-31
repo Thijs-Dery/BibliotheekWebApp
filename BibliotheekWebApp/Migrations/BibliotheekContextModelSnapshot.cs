@@ -195,9 +195,8 @@ namespace BibliotheekWebApp.Migrations
                     b.Property<int?>("AuteurID")
                         .HasColumnType("int");
 
-                    b.Property<string>("GebruikerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GebruikerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ISBN")
                         .HasColumnType("nvarchar(450)");
@@ -496,7 +495,7 @@ namespace BibliotheekWebApp.Migrations
                         .WithMany()
                         .HasForeignKey("AuteurID");
 
-                    b.HasOne("BibliotheekApp.Models.ApplicationUser", "Gebruiker")
+                    b.HasOne("BibliotheekApp.Models.Lid", "Gebruiker")
                         .WithMany()
                         .HasForeignKey("GebruikerId")
                         .OnDelete(DeleteBehavior.Cascade)

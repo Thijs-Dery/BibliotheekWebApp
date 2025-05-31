@@ -9,10 +9,10 @@ namespace BibliotheekApp.Models
         public int Id { get; set; }
 
         [Required]
-        public string GebruikerId { get; set; }
+        public int GebruikerId { get; set; }  // Link naar Lid.LidID
 
         [ForeignKey("GebruikerId")]
-        public ApplicationUser Gebruiker { get; set; }
+        public Lid Gebruiker { get; set; }
 
         public string? ISBN { get; set; }
 
