@@ -9,10 +9,10 @@ namespace BibliotheekApp.Models
         public int Id { get; set; }
 
         [Required]
-        public int GebruikerId { get; set; }  // Link naar Lid.LidID
+        public string GebruikerId { get; set; } = null!;
 
         [ForeignKey("GebruikerId")]
-        public Lid Gebruiker { get; set; }
+        public ApplicationUser Gebruiker { get; set; } = null!;
 
         public string? ISBN { get; set; }
 
@@ -25,6 +25,6 @@ namespace BibliotheekApp.Models
         public Auteur? Auteur { get; set; }
 
         [Required]
-        public string Type { get; set; }  // "Boek" of "Auteur"
+        public string Type { get; set; } = null!;
     }
 }
